@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="80dp">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/storyModeButton"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/storymodebutton" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/casualModeButton"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/casualmodebutton" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/gameSettingButton"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/gamesettingbutton" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/gameHelpButton"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/gamehelpbutton" />
+
+    </LinearLayout>
+</LinearLayout>
