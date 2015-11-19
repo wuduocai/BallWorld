@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/back"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/arraw3"/>
+        android:src="@drawable/arraw3"
+        android:clickable="true"
+        android:focusable="true" />
 
     <LinearLayout
         android:orientation="vertical"

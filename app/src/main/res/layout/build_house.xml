@@ -13,7 +13,9 @@
         android:id="@+id/back"
         android:layout_gravity="center_vertical"
         android:src="@drawable/arraw3"
-        android:layout_marginRight="-45dp"/>
+        android:layout_marginRight="-45dp"
+        android:clickable="true"
+        android:focusable="true" />
 
     <LinearLayout
         android:orientation="vertical"
