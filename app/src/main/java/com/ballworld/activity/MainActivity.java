@@ -303,7 +303,7 @@ public class MainActivity extends Activity {
                 if (event.getAction() == event.ACTION_UP) {
                     house.setImageResource(R.drawable.house);
                     if (click)
-                        hd.sendEmptyMessage(0);
+                        setContentView(R.layout.build_house);
                     click = true;
                 }
                 return false;
@@ -423,7 +423,7 @@ public class MainActivity extends Activity {
                 if (event.getAction() == event.ACTION_UP) {
                     fabricate.setImageResource(R.drawable.fabricate);
                     if (click)
-                        hd.sendEmptyMessage(0);
+                        hd.sendEmptyMessage(3);
                     click = true;
                 }
                 return false;
@@ -483,7 +483,7 @@ public class MainActivity extends Activity {
                 if (event.getAction() == event.ACTION_UP) {
                     arraw2.setImageResource(R.drawable.arraw2);
                     if (click)
-                        hd.sendEmptyMessage(0);
+                        hd.sendEmptyMessage(2);
                     click = true;
                 }
                 return false;
@@ -497,6 +497,36 @@ public class MainActivity extends Activity {
      */
     private void goToBuildHouseView() {
         setContentView(R.layout.build_house);
+        final ImageView arraw3 = (ImageView) findViewById(R.id.back);
+        arraw3.setOnTouchListener(new OnTouchListener() {
+            boolean click = true;
+            float previousX = 0;
+            float previousY = 0;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float x = event.getX();
+                float y = event.getY();
+                if (event.getAction() == event.ACTION_DOWN) {
+                    arraw3.setImageResource(R.drawable.arraw3pressed);
+                }
+                if (event.getAction() == event.ACTION_MOVE) {
+                    float dx = x - previousX;
+                    float dy = y - previousY;
+                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
+                        click = false;
+                    previousX = x;
+                    previousY = y;
+                }
+                if (event.getAction() == event.ACTION_UP) {
+                    arraw3.setImageResource(R.drawable.arraw3);
+                    if (click)
+                        hd.sendEmptyMessage(1);
+                    click = true;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -504,6 +534,36 @@ public class MainActivity extends Activity {
      */
     private void goToMakeWeaponView() {
         setContentView(R.layout.make_weapon);
+        final ImageView arraw3 = (ImageView) findViewById(R.id.back);
+        arraw3.setOnTouchListener(new OnTouchListener() {
+            boolean click = true;
+            float previousX = 0;
+            float previousY = 0;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float x = event.getX();
+                float y = event.getY();
+                if (event.getAction() == event.ACTION_DOWN) {
+                    arraw3.setImageResource(R.drawable.arraw3pressed);
+                }
+                if (event.getAction() == event.ACTION_MOVE) {
+                    float dx = x - previousX;
+                    float dy = y - previousY;
+                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
+                        click = false;
+                    previousX = x;
+                    previousY = y;
+                }
+                if (event.getAction() == event.ACTION_UP) {
+                    arraw3.setImageResource(R.drawable.arraw3);
+                    if (click)
+                        hd.sendEmptyMessage(1);
+                    click = true;
+                }
+                return false;
+            }
+        });
     }
 
     /**
