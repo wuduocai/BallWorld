@@ -132,8 +132,7 @@ public class Ball {
 
         //创建纹理坐标缓冲
         float textureCoors[]=new float[alTexture.size()];//顶点纹理值数组
-        for(int i=0;i<alTexture.size();i++)
-        {
+        for(int i=0;i<alTexture.size();i++) {
             textureCoors[i]=alTexture.get(i);
         }
 

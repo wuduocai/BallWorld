@@ -13,16 +13,20 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.ballworld.util.RotateUtil;
+import com.ballworld.util.ShareUtil;
+import com.ballworld.view.CoverFlowGallery;
 import com.ballworld.view.GameView;
 import com.ballworld.view.WelcomeView;
 
@@ -42,6 +46,8 @@ public class MainActivity extends Activity {
     //view
     WelcomeView welcomeView;
     GameView gameView;
+    //关数
+    public int levelId = 0;
     //    界面转换控制
     public Handler hd = new Handler() {
         @Override
@@ -77,9 +83,13 @@ public class MainActivity extends Activity {
                 case 9://回到欢迎界面
                     goToWelcomeView();
                     break;
+                case 10://休闲模式选择
+                    goToCasualModeView();
+                    break;
             }
         }
     };
+
     //功能引用
     Vibrator myVibrator;//声明振动器
     boolean shakeflag=true;//是否震动
@@ -217,7 +227,7 @@ public class MainActivity extends Activity {
         casualMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hd.sendEmptyMessage(5);//游戏界面
+                hd.sendEmptyMessage(10);//游戏界面
             }
         });
         gameSetting.setOnClickListener(new View.OnClickListener() {
@@ -275,7 +285,7 @@ public class MainActivity extends Activity {
                         hd.sendEmptyMessage(0);
                     click = true;
                 }
-                return false;
+                return true;
             }
         });
 
@@ -302,11 +312,13 @@ public class MainActivity extends Activity {
                 }
                 if (event.getAction() == event.ACTION_UP) {
                     house.setImageResource(R.drawable.house);
-                    if (click)
-                        setContentView(R.layout.build_house);
+                    if (click) {
+                        ShareUtil shareUtil = new ShareUtil(MainActivity.this);
+                        shareUtil.showShare();
+                    }
                     click = true;
                 }
-                return false;
+                return true;
             }
         });
 
@@ -502,6 +514,7 @@ public class MainActivity extends Activity {
             boolean click = true;
             float previousX = 0;
             float previousY = 0;
+            int a = R.drawable.arraw3pressed;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -524,7 +537,7 @@ public class MainActivity extends Activity {
                         hd.sendEmptyMessage(1);
                     click = true;
                 }
-                return false;
+                return true;
             }
         });
     }
@@ -578,11 +591,31 @@ public class MainActivity extends Activity {
      * 进入游戏界面
      */
     private void goToGameView() {
-        int levelId = (int)(Math.random()*4);
         gameView = new GameView(this, levelId);//模拟第0（1）关
         gameView.requestFocus();//获得焦点
-        gameView.setFocusableInTouchMode(false);//可触控
+        gameView.setFocusableInTouchMode(true);//可触控
         this.setContentView(gameView);
+    }
+
+    /**
+     * 进入休闲模式界面
+     */
+    private void goToCasualModeView() {
+        setContentView(R.layout.casual_mode_gallery);
+        final CoverFlowGallery cfg = (CoverFlowGallery)findViewById(R.id.gallery);//使用画廊
+        CoverFlowGallery.ImageAdapter imageAdapter = cfg.new ImageAdapter(this);
+        cfg.setAdapter(imageAdapter);//自定义图片的填充方式
+        //添加监听器
+        cfg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position<4&&cfg.galleryCenterPoint==cfg.getViewCenterPoint(view)) {
+                    levelId = position;
+                    hd.sendEmptyMessage(5);//游戏界面
+                }
+            }
+        });
+
     }
 
     /**
@@ -613,8 +646,7 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onResume() //重写onResume方法
-    {
+    protected void onResume() {//重写onResume方法
         super.onResume();
         mySensorManager.registerListener
                 (            //注册监听器
