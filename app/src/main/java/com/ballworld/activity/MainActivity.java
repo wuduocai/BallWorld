@@ -3,6 +3,7 @@ package com.ballworld.activity;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
@@ -14,6 +15,7 @@ import android.os.Message;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,6 +23,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -609,7 +613,7 @@ public class MainActivity extends Activity {
         cfg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position<4&&cfg.galleryCenterPoint==cfg.getViewCenterPoint(view)) {
+                if (position < 4 && cfg.galleryCenterPoint == cfg.getViewCenterPoint(view)) {
                     levelId = position;
                     hd.sendEmptyMessage(5);//游戏界面
                 }
@@ -643,8 +647,68 @@ public class MainActivity extends Activity {
      */
     private void goToSettingView() {
         setContentView(R.layout.setting);
+
+        //返回菜单
+        Button back = (Button)findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hd.sendEmptyMessage(0);
+            }
+        });
+
+        //音效
+        final CheckBox sound = (CheckBox)findViewById(R.id.sound);
+        if (knockWallSoundFlag)
+            sound.setChecked(true);
+        else
+            sound.setChecked(false);
+        sound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(sound.isChecked())
+                    knockWallSoundFlag=true;
+                else
+                    knockWallSoundFlag=false;
+            }
+        });
+
+        //震动
+        final CheckBox shake = (CheckBox)findViewById(R.id.shake);
+        if (shakeflag)
+            shake.setChecked(true);
+        else
+            shake.setChecked(false);
+        shake.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shake.isChecked())
+                    shakeflag=true;
+                else
+                    shakeflag=false;
+            }
+        });
+
+        //实现问题反馈
+        final CheckBox chat = (CheckBox)findViewById(R.id.chat);
+        chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (chat.isChecked()) {
+                    Intent intent = new Intent(MainActivity.this,SmartChatActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            hd.sendEmptyMessage(0);
+        }
+        return true;
+    }
     @Override
     protected void onResume() {//重写onResume方法
         super.onResume();

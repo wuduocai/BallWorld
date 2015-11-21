@@ -408,8 +408,14 @@ public class GameView extends GLSurfaceView {
                         //如果没有覆盖将数字提升到小球上方
                         if(coverBlocks[i][j]==0&&iZ==i&&iX==j){
                             number.y=1.5f;
-                            number.x+=0.1f;
-                            number.z+=0.1f;
+                            if (j<11)
+                                number.x+=UNIT_SIZE/3;
+                            else if (j>22)
+                                number.x-=UNIT_SIZE/3;
+                            if (i<6)
+                                number.z+=0.2f;
+                            else if (i>12)
+                                number.z-=0.2f;
                         }
                         number.drawSelf(gl, numberId);//绘制
                     }
