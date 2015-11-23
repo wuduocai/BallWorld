@@ -255,256 +255,38 @@ public class MainActivity extends Activity {
      */
     private void goToTownView() {
         setContentView(R.layout.main_town);
+        //医院
         final ImageView hospital = (ImageView) findViewById(R.id.hospital);
+        //农场
         final ImageView food = (ImageView) findViewById(R.id.food);
+        //铁匠铺
         final ImageView fabricate = (ImageView) findViewById(R.id.fabricate);
+        //伐木场
         final ImageView wood = (ImageView) findViewById(R.id.wood);
+        //矿场
         final ImageView mine = (ImageView) findViewById(R.id.mine);
+        //住房
         final ImageView house = (ImageView) findViewById(R.id.house);
+        //go按钮，即出征
         final ImageView arraw1 = (ImageView) findViewById(R.id.arraw1);
+        //build按钮，即建造房屋
         final ImageView arraw2 = (ImageView) findViewById(R.id.arraw2);
-        hospital.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    hospital.setImageResource(R.drawable.hospitalpressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x-previousX;
-                    float dy = y-previousY;
-                    if ((dx>2||dy>2)&&previousX!=0&&previousY!=0)
-                        click = false;
-                    previousX=x;
-                    previousY=y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    hospital.setImageResource(R.drawable.hospital);
-                    if (click)
-                        hd.sendEmptyMessage(0);
-                    click = true;
-                }
-                return true;
-            }
-        });
-
-
-        house.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    house.setImageResource(R.drawable.housepressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x-previousX;
-                    float dy = y-previousY;
-                    if ((dx>2||dy>2)&&previousX!=0&&previousY!=0)
-                        click = false;
-                    previousX=x;
-                    previousY=y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    house.setImageResource(R.drawable.house);
-                    if (click) {
-                        ShareUtil shareUtil = new ShareUtil(MainActivity.this);
-                        shareUtil.showShare();
-                    }
-                    click = true;
-                }
-                return true;
-            }
-        });
-
-        wood.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    wood.setImageResource(R.drawable.woodpressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x-previousX;
-                    float dy = y-previousY;
-                    if ((dx>2||dy>2)&&previousX!=0&&previousY!=0)
-                        click = false;
-                    previousX=x;
-                    previousY=y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    wood.setImageResource(R.drawable.wood);
-                    if (click)
-                        hd.sendEmptyMessage(0);
-                    click = true;
-                }
-                return false;
-            }
-        });
-
-        food.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    food.setImageResource(R.drawable.foodpressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x - previousX;
-                    float dy = y - previousY;
-                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
-                        click = false;
-                    previousX = x;
-                    previousY = y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    food.setImageResource(R.drawable.food);
-                    if (click)
-                        hd.sendEmptyMessage(0);
-                    click = true;
-                }
-                return false;
-            }
-        });
-
-        mine.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    mine.setImageResource(R.drawable.minepressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x - previousX;
-                    float dy = y - previousY;
-                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
-                        click = false;
-                    previousX = x;
-                    previousY = y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    mine.setImageResource(R.drawable.mine);
-                    if (click)
-                        hd.sendEmptyMessage(0);
-                    click = true;
-                }
-                return false;
-            }
-        });
-
-        fabricate.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    fabricate.setImageResource(R.drawable.fabricatepressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x - previousX;
-                    float dy = y - previousY;
-                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
-                        click = false;
-                    previousX = x;
-                    previousY = y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    fabricate.setImageResource(R.drawable.fabricate);
-                    if (click)
-                        hd.sendEmptyMessage(3);
-                    click = true;
-                }
-                return false;
-            }
-        });
-
-        arraw1.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    arraw1.setImageResource(R.drawable.arraw1pressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x - previousX;
-                    float dy = y - previousY;
-                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
-                        click = false;
-                    previousX = x;
-                    previousY = y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    arraw1.setImageResource(R.drawable.arraw1);
-                    if (click)
-                        hd.sendEmptyMessage(0);
-                    click = true;
-                }
-                return false;
-            }
-        });
-
-        arraw2.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    arraw2.setImageResource(R.drawable.arraw2pressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x - previousX;
-                    float dy = y - previousY;
-                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
-                        click = false;
-                    previousX = x;
-                    previousY = y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    arraw2.setImageResource(R.drawable.arraw2);
-                    if (click)
-                        hd.sendEmptyMessage(2);
-                    click = true;
-                }
-                return false;
-            }
-        });
+        //对医院添加监听器
+        imageClick(hospital, R.drawable.hospitalpressed, R.drawable.hospital, 0);
+        //对住房添加监听器
+        imageClick(house, R.drawable.housepressed, R.drawable.house, 0);
+        //对伐木场添加监听器
+        imageClick(wood, R.drawable.woodpressed, R.drawable.wood, 0);
+        //对农场添加监听器
+        imageClick(food, R.drawable.foodpressed, R.drawable.food, 0);
+        //对矿场添加监听器
+        imageClick(mine, R.drawable.minepressed, R.drawable.mine, 0);
+        //对铁匠铺添加监听器，前往开发装备界面
+        imageClick(fabricate, R.drawable.fabricatepressed, R.drawable.fabricate, 3);
+        //对arraw1添加监听器，即go按钮
+        imageClick(arraw1, R.drawable.arraw1pressed, R.drawable.arraw1, 0);
+        //对arraw2添加监听器，即build按钮，前往建造房屋界面
+        imageClick(arraw2, R.drawable.arraw2pressed, R.drawable.arraw2, 2);
         //add listener
     }
 
@@ -513,37 +295,9 @@ public class MainActivity extends Activity {
      */
     private void goToBuildHouseView() {
         setContentView(R.layout.build_house);
+        //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
-        arraw3.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-            int a = R.drawable.arraw3pressed;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    arraw3.setImageResource(R.drawable.arraw3pressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x - previousX;
-                    float dy = y - previousY;
-                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
-                        click = false;
-                    previousX = x;
-                    previousY = y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    arraw3.setImageResource(R.drawable.arraw3);
-                    if (click)
-                        hd.sendEmptyMessage(1);
-                    click = true;
-                }
-                return true;
-            }
-        });
+        imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
     }
 
     /**
@@ -551,36 +305,9 @@ public class MainActivity extends Activity {
      */
     private void goToMakeWeaponView() {
         setContentView(R.layout.make_weapon);
+        //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
-        arraw3.setOnTouchListener(new OnTouchListener() {
-            boolean click = true;
-            float previousX = 0;
-            float previousY = 0;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                if (event.getAction() == event.ACTION_DOWN) {
-                    arraw3.setImageResource(R.drawable.arraw3pressed);
-                }
-                if (event.getAction() == event.ACTION_MOVE) {
-                    float dx = x - previousX;
-                    float dy = y - previousY;
-                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
-                        click = false;
-                    previousX = x;
-                    previousY = y;
-                }
-                if (event.getAction() == event.ACTION_UP) {
-                    arraw3.setImageResource(R.drawable.arraw3);
-                    if (click)
-                        hd.sendEmptyMessage(1);
-                    click = true;
-                }
-                return false;
-            }
-        });
+        imageClick(arraw3,R.drawable.arraw3pressed,R.drawable.arraw3,1);
     }
 
     /**
@@ -698,6 +425,42 @@ public class MainActivity extends Activity {
                     Intent intent = new Intent(MainActivity.this,SmartChatActivity.class);
                     startActivity(intent);
                 }
+            }
+        });
+    }
+
+    /*
+    * 使imageview被点击时模拟出button的效果
+    * 传入的参数分别为该imageview，两张图片，即将进入的界面
+    * */
+    public void imageClick(final ImageView image, final int pic1,final int pic2,final int des){
+        image.setOnTouchListener(new OnTouchListener() {
+            boolean click = true;
+            float previousX = 0;
+            float previousY = 0;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float x = event.getX();
+                float y = event.getY();
+                if (event.getAction() == event.ACTION_DOWN) {
+                    image.setImageResource(pic1);
+                }
+                if (event.getAction() == event.ACTION_MOVE) {
+                    float dx = x - previousX;
+                    float dy = y - previousY;
+                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
+                        click = false;
+                    previousX = x;
+                    previousY = y;
+                }
+                if (event.getAction() == event.ACTION_UP) {
+                    image.setImageResource(pic2);
+                    if (click)
+                        hd.sendEmptyMessage(des);
+                    click = true;
+                }
+                return true;
             }
         });
     }

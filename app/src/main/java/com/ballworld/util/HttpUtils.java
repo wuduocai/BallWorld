@@ -20,6 +20,7 @@ import java.util.Date;
 public class HttpUtils {
     private static final String URL = "http://www.tuling123.com/openapi/api";
     private static final String API_KEY = "23781d77959cdf4f28067d93246d785b";
+    private static final String USER_ID = "admin";
 
     /**
      * 发送一个消息，得到返回的消息
@@ -101,7 +102,7 @@ public class HttpUtils {
     private static String setParams(String msg) {
         String url = "";
         try {
-            url = URL + "?key=" + API_KEY + "&info="
+            url = URL + "?key=" + API_KEY + "&userid="+USER_ID+"&info="
                     + URLEncoder.encode(msg, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
