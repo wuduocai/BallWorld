@@ -1,0 +1,188 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@drawable/townbackground">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginTop="100dp"
+            android:alpha="100">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/house"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/house"
+                android:clickable="true"
+                android:focusable="true"
+                android:longClickable="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/food"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/food"
+                android:focusable="true"
+                android:clickable="true"
+                android:longClickable="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/hospital"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/hospital"
+                android:adjustViewBounds="false"
+                android:clickable="true"
+                android:foregroundTint="@color/abc_search_url_text_selected"
+                android:tintMode="screen"
+                android:visibility="visible"
+                android:longClickable="true"
+                android:foregroundTintMode="multiply"
+                android:focusableInTouchMode="false"
+                android:focusable="true"
+                android:contextClickable="false" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/mine"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/mine"
+                android:clickable="true"
+                android:focusable="true"
+                android:longClickable="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/wood"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/wood"
+                android:clickable="true"
+                android:focusable="true"
+                android:longClickable="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fabricate"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/fabricate"
+                android:clickable="true"
+                android:focusable="true"
+                android:longClickable="true" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/arraw1"
+        android:layout_marginTop="150dp"
+        android:src="@drawable/arraw1"
+        android:layout_alignParentLeft="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:longClickable="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/arraw2"
+        android:src="@drawable/arraw2"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/arraw1"
+        android:clickable="true"
+        android:focusable="true"
+        android:longClickable="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/head"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/head"
+        android:clickable="true"
+        android:focusable="true"
+        android:longClickable="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bar"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/fail"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="23"
+        android:id="@+id/foodstorage"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/bar"
+        android:layout_toLeftOf="@id/bar"
+        android:layout_marginRight="-180px"
+        android:layout_marginTop="9px"
+        android:gravity="right"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="384"
+        android:id="@+id/woodstorage"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/foodstorage"
+        android:layout_toLeftOf="@id/foodstorage"
+        android:layout_marginRight="-230px"
+        android:layout_marginTop="9px"
+        android:gravity="right"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="9265"
+        android:id="@+id/minestorage"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/woodstorage"
+        android:layout_toLeftOf="@id/woodstorage"
+        android:layout_marginRight="-230px"
+        android:layout_marginTop="9px"
+        android:gravity="right"/>
+
+</RelativeLayout>
