@@ -137,6 +137,7 @@
         android:focusable="true"
         android:longClickable="true" />
 
+<<<<<<< HEAD
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -184,5 +185,7 @@
         android:layout_marginRight="-230px"
         android:layout_marginTop="9px"
         android:gravity="right"/>
+=======
+>>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
 
 </RelativeLayout>

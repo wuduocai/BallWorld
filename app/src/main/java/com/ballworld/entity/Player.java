@@ -1,4 +1,4 @@
-package com.ballworld.entity;
+﻿package com.ballworld.entity;
 
 /**
  * Created by duocai at 18:23 on 2015/11/14.

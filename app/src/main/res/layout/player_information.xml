@@ -10,6 +10,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
         android:id="@+id/back"
         android:layout_gravity="center_vertical"
         android:src="@drawable/arraw3"
@@ -53,4 +54,9 @@
         </LinearLayout>
 
     </LinearLayout>
+=======
+        android:id="@+id/imageView"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/arraw3"/>
+>>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
 </LinearLayout>

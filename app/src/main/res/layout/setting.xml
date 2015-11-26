@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+<<<<<<< HEAD
     android:background="#000000">
 
     <TextView
@@ -11,4 +12,46 @@
         android:text="game setting view"
         android:id="@+id/textView2"
         android:textColor="#ffffff" />
+=======
+    android:background="@drawable/menu"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical">
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="震动效果"
+        android:id="@+id/shake"
+        android:checked="true"
+        android:textSize="24dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="背景音效"
+        android:id="@+id/sound"
+        android:checked="true"
+        android:textSize="24dp" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="问题反馈"
+        android:id="@+id/chat"
+        android:layout_gravity="center_horizontal"
+        android:checked="false"
+        android:focusable="true"
+        android:clickable="true"
+        android:textSize="24dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="返回"
+        android:id="@+id/back"
+        android:layout_gravity="right"
+        android:layout_marginBottom="-100dp"
+        android:layout_marginTop="100dp" />
+
+>>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
 </LinearLayout>

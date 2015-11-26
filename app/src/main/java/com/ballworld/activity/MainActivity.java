@@ -1,8 +1,9 @@
-package com.ballworld.activity;
+﻿package com.ballworld.activity;
 
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
@@ -13,6 +14,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -26,6 +29,15 @@ import android.widget.TextView;
 import com.ballworld.entity.Player;
 import com.ballworld.thread.ResourceThread;
 import com.ballworld.util.RotateUtil;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+
+import com.ballworld.util.RotateUtil;
+import com.ballworld.util.ShareUtil;
+import com.ballworld.view.CoverFlowGallery;
 import com.ballworld.view.GameView;
 import com.ballworld.view.WelcomeView;
 
@@ -45,6 +57,8 @@ public class MainActivity extends Activity {
     //view
     WelcomeView welcomeView;
     GameView gameView;
+    //关数
+    public int levelId = 0;
     //    界面转换控制
     public Handler hd = new Handler() {
         @Override
@@ -80,9 +94,13 @@ public class MainActivity extends Activity {
                 case 9://回到欢迎界面
                     goToWelcomeView();
                     break;
+                case 10://休闲模式选择
+                    goToCasualModeView();
+                    break;
             }
         }
     };
+
     //功能引用
     Vibrator myVibrator;//声明振动器
     boolean shakeflag=true;//是否震动
@@ -220,7 +238,7 @@ public class MainActivity extends Activity {
         casualMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hd.sendEmptyMessage(5);//游戏界面
+                hd.sendEmptyMessage(10);//游戏界面
             }
         });
         gameSetting.setOnClickListener(new View.OnClickListener() {
@@ -338,11 +356,31 @@ public class MainActivity extends Activity {
      * 进入游戏界面
      */
     private void goToGameView() {
-        int levelId = (int)(Math.random()*4);
         gameView = new GameView(this, levelId);//模拟第0（1）关
         gameView.requestFocus();//获得焦点
-        gameView.setFocusableInTouchMode(false);//可触控
+        gameView.setFocusableInTouchMode(true);//可触控
         this.setContentView(gameView);
+    }
+
+    /**
+     * 进入休闲模式界面
+     */
+    private void goToCasualModeView() {
+        setContentView(R.layout.casual_mode_gallery);
+        final CoverFlowGallery cfg = (CoverFlowGallery)findViewById(R.id.gallery);//使用画廊
+        CoverFlowGallery.ImageAdapter imageAdapter = cfg.new ImageAdapter(this);
+        cfg.setAdapter(imageAdapter);//自定义图片的填充方式
+        //添加监听器
+        cfg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position < 4 && cfg.galleryCenterPoint == cfg.getViewCenterPoint(view)) {
+                    levelId = position;
+                    hd.sendEmptyMessage(5);//游戏界面
+                }
+            }
+        });
+
     }
 
     /**
@@ -370,6 +408,59 @@ public class MainActivity extends Activity {
      */
     private void goToSettingView() {
         setContentView(R.layout.setting);
+
+        //返回菜单
+        Button back = (Button)findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hd.sendEmptyMessage(0);
+            }
+        });
+
+        //音效
+        final CheckBox sound = (CheckBox)findViewById(R.id.sound);
+        if (knockWallSoundFlag)
+            sound.setChecked(true);
+        else
+            sound.setChecked(false);
+        sound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(sound.isChecked())
+                    knockWallSoundFlag=true;
+                else
+                    knockWallSoundFlag=false;
+            }
+        });
+
+        //震动
+        final CheckBox shake = (CheckBox)findViewById(R.id.shake);
+        if (shakeflag)
+            shake.setChecked(true);
+        else
+            shake.setChecked(false);
+        shake.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shake.isChecked())
+                    shakeflag=true;
+                else
+                    shakeflag=false;
+            }
+        });
+
+        //实现问题反馈
+        final CheckBox chat = (CheckBox)findViewById(R.id.chat);
+        chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (chat.isChecked()) {
+                    Intent intent = new Intent(MainActivity.this,SmartChatActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     /*
@@ -409,8 +500,14 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onResume() //重写onResume方法
-    {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            hd.sendEmptyMessage(0);
+        }
+        return true;
+    }
+    @Override
+    protected void onResume() {//重写onResume方法
         super.onResume();
         mySensorManager.registerListener
                 (            //注册监听器

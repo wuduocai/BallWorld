@@ -1,4 +1,4 @@
-package com.ballworld.util;
+﻿package com.ballworld.util;
 
 /**
  * Created by duocai at 19:25 on 2015/10/31.
@@ -12,7 +12,7 @@ public class Constant {
     public static final float UNIT_SIZE = 1.5f;//地面每个格子的大小
     public static final float FLOOR_Y = 0f;//地面的Y坐标
     public static final float ballR = 0.75f;//球半径
-    public static final float V_TENUATION = 0.950f;//速度衰减系数
+    public static float V_TENUATION = 0.60f;//速度衰减系数
     public static final float VZ_TENUATION = 0.655f;//碰壁时的速度衰减系数
     public static final float DISTANCE = 45;//30f;//摄像机与目标点的距离
 
