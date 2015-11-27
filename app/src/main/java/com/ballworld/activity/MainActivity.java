@@ -1,4 +1,4 @@
-package com.ballworld.activity;
+﻿package com.ballworld.activity;
 
 import android.app.Activity;
 import android.app.Service;
@@ -22,6 +22,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.ballworld.entity.Player;
+import com.ballworld.thread.ResourceThread;
+import com.ballworld.util.RotateUtil;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -255,6 +262,8 @@ public class MainActivity extends Activity {
      */
     private void goToTownView() {
         setContentView(R.layout.main_town);
+        //头像点击，即进入个人信息界面
+        final ImageView person=(ImageView)findViewById(R.id.head);
         //医院
         final ImageView hospital = (ImageView) findViewById(R.id.hospital);
         //农场
@@ -271,6 +280,28 @@ public class MainActivity extends Activity {
         final ImageView arraw1 = (ImageView) findViewById(R.id.arraw1);
         //build按钮，即建造房屋
         final ImageView arraw2 = (ImageView) findViewById(R.id.arraw2);
+        //资源显示的textview
+        final TextView foodstorage=(TextView)findViewById(R.id.foodstorage);
+        final TextView woodstorage=(TextView)findViewById(R.id.woodstorage);
+        final TextView minestorage=(TextView)findViewById(R.id.minestorage);
+        //用于更新textview的handler
+        Handler handler=new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle=msg.getData();
+                foodstorage.setText(""+bundle.getInt("food"));
+                woodstorage.setText(""+bundle.getInt("wood"));
+                minestorage.setText(""+bundle.getInt("mine"));
+            }
+        };
+
+        //实例化player
+        Player player=new Player(0,0,0);
+        //启动resource线程，自动增加资源
+        Thread resource=new ResourceThread(player,handler);
+        resource.start();
+        //对头像添加监听器
+        imageClick(person,R.drawable.head,R.drawable.head,4);
         //对医院添加监听器
         imageClick(hospital, R.drawable.hospitalpressed, R.drawable.hospital, 0);
         //对住房添加监听器
@@ -315,7 +346,10 @@ public class MainActivity extends Activity {
      * 要实现穿戴装备功能
      */
     private void goToPlayerInformationView() {
-
+        setContentView(R.layout.player_information);
+        //返回按钮
+        final ImageView arraw3 = (ImageView) findViewById(R.id.back);
+        imageClick(arraw3,R.drawable.arraw3pressed,R.drawable.arraw3,1);
     }
 
     /**

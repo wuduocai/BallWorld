@@ -10,7 +10,53 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
+        android:id="@+id/back"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/arraw3"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/psersoninfo"
+            android:src="@drawable/personinfo"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="15dp" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/weaponlist"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/weaponbac"
+                android:layout_marginBottom="15dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/weaponinfo"
+                android:src="@drawable/weaponbac"
+                android:layout_gravity="center_vertical" />
+        </LinearLayout>
+
+    </LinearLayout>
+=======
         android:id="@+id/imageView"
         android:layout_gravity="center_vertical"
         android:src="@drawable/arraw3"/>
+>>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
 </LinearLayout>

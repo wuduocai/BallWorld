@@ -137,5 +137,55 @@
         android:focusable="true"
         android:longClickable="true" />
 
+<<<<<<< HEAD
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bar"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/fail"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="23"
+        android:id="@+id/foodstorage"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/bar"
+        android:layout_toLeftOf="@id/bar"
+        android:layout_marginRight="-180px"
+        android:layout_marginTop="9px"
+        android:gravity="right"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="384"
+        android:id="@+id/woodstorage"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/foodstorage"
+        android:layout_toLeftOf="@id/foodstorage"
+        android:layout_marginRight="-230px"
+        android:layout_marginTop="9px"
+        android:gravity="right"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="9265"
+        android:id="@+id/minestorage"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/woodstorage"
+        android:layout_toLeftOf="@id/woodstorage"
+        android:layout_marginRight="-230px"
+        android:layout_marginTop="9px"
+        android:gravity="right"/>
+=======
+>>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
 
 </RelativeLayout>

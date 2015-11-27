@@ -1,4 +1,4 @@
-package com.ballworld.mapEntity;
+﻿package com.ballworld.mapEntity;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
