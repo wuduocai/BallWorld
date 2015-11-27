@@ -27,24 +27,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-<<<<<<< HEAD
             android:layout_marginTop="20dp"
-=======
->>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
             android:id="@+id/make"
             android:src="@drawable/make"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-<<<<<<< HEAD
-            android:layout_marginTop="20dp"
-            android:id="@+id/test"
-            android:src="@drawable/fabricateinfo"/>
-=======
             android:id="@+id/test"
             android:src="@drawable/raw"/>
->>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
 
     </LinearLayout>
 

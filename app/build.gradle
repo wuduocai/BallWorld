@@ -20,12 +20,9 @@ android {
 }
 
 dependencies {
-<<<<<<< HEAD
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.0.1'
-=======
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile files('libs/MobCommons.jar')
->>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
 }
