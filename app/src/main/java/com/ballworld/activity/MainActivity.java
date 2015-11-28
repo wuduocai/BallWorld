@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -34,6 +35,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.ballworld.util.RotateUtil;
 import com.ballworld.util.ShareUtil;
@@ -59,6 +61,11 @@ public class MainActivity extends Activity {
     GameView gameView;
     //关数
     public int levelId = 0;
+
+    ResourceThread resource;
+    //声明player
+    Player player;
+    //判断控制资源增长的线程是否已经开启
     //    界面转换控制
     public Handler hd = new Handler() {
         @Override
@@ -222,6 +229,10 @@ public class MainActivity extends Activity {
     private void goToMenuView() {
         this.setContentView(R.layout.menu);
 
+        //实例化player
+        player=new Player(0,0,0);
+        resource=new ResourceThread(player,null);
+
         //get button
         ImageButton storyMode = (ImageButton) this.findViewById(R.id.storyModeButton),
                 casualMode = (ImageButton) this.findViewById(R.id.casualModeButton),
@@ -253,6 +264,7 @@ public class MainActivity extends Activity {
                 hd.sendEmptyMessage(7);//帮助界面
             }
         });
+
     }
 
     /**
@@ -284,8 +296,16 @@ public class MainActivity extends Activity {
         final TextView foodstorage=(TextView)findViewById(R.id.foodstorage);
         final TextView woodstorage=(TextView)findViewById(R.id.woodstorage);
         final TextView minestorage=(TextView)findViewById(R.id.minestorage);
+
+        //每次进入该界面时实时调整资源的数量
+        foodstorage.setText(""+player.getFood());
+        woodstorage.setText(""+player.getWood());
+        minestorage.setText(""+player.getMine());
+
+        //将未建造的建筑加上黑色的滤镜
+        showBlack(new ImageView[]{house,food,wood,mine,fabricate,hospital},player);
         //用于更新textview的handler
-        Handler handler=new Handler(){
+        resource.setHandler(new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 Bundle bundle=msg.getData();
@@ -293,27 +313,37 @@ public class MainActivity extends Activity {
                 woodstorage.setText(""+bundle.getInt("wood"));
                 minestorage.setText(""+bundle.getInt("mine"));
             }
-        };
-
-        //实例化player
-        Player player=new Player(0,0,0);
-        //启动resource线程，自动增加资源
-        Thread resource=new ResourceThread(player,handler);
-        resource.start();
+        });
+        if(!resource.getFlag()){
+            resource.start();
+            resource.setFlag(true);
+        }
         //对头像添加监听器
         imageClick(person,R.drawable.head,R.drawable.head,4);
         //对医院添加监听器
-        imageClick(hospital, R.drawable.hospitalpressed, R.drawable.hospital, 0);
+        if(player.getBuilding()[5].getLevel()!=0){
+            imageClick(hospital, R.drawable.hospitalpressed, R.drawable.hospital, 0);
+        }
         //对住房添加监听器
-        imageClick(house, R.drawable.housepressed, R.drawable.house, 0);
+        if(player.getBuilding()[0].getLevel()!=0){
+            imageClick(house, R.drawable.housepressed, R.drawable.house, 0);
+        }
         //对伐木场添加监听器
-        imageClick(wood, R.drawable.woodpressed, R.drawable.wood, 0);
+        if(player.getBuilding()[2].getLevel()!=0){
+            imageClick(wood, R.drawable.woodpressed, R.drawable.wood, 0);
+        }
         //对农场添加监听器
-        imageClick(food, R.drawable.foodpressed, R.drawable.food, 0);
+        if(player.getBuilding()[1].getLevel()!=0){
+            imageClick(food, R.drawable.foodpressed, R.drawable.food, 0);
+        }
         //对矿场添加监听器
-        imageClick(mine, R.drawable.minepressed, R.drawable.mine, 0);
+        if(player.getBuilding()[3].getLevel()!=0){
+            imageClick(mine, R.drawable.minepressed, R.drawable.mine, 0);
+        }
         //对铁匠铺添加监听器，前往开发装备界面
-        imageClick(fabricate, R.drawable.fabricatepressed, R.drawable.fabricate, 3);
+        if(player.getBuilding()[4].getLevel()!=0){
+            imageClick(fabricate, R.drawable.fabricatepressed, R.drawable.fabricate, 3);
+        }
         //对arraw1添加监听器，即go按钮
         imageClick(arraw1, R.drawable.arraw1pressed, R.drawable.arraw1, 0);
         //对arraw2添加监听器，即build按钮，前往建造房屋界面
@@ -328,6 +358,26 @@ public class MainActivity extends Activity {
         setContentView(R.layout.build_house);
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
+        //房屋的建造按钮
+        final ImageButton bulidHouse=(ImageButton)findViewById(R.id.buildhouse);
+        //农场的建造按钮
+        final ImageButton bulidFood=(ImageButton)findViewById(R.id.buildfood);
+        //伐木场的建造按钮
+        final ImageButton bulidWood=(ImageButton)findViewById(R.id.buildwood);
+        //矿场的建造按钮
+        final ImageButton bulidMine=(ImageButton)findViewById(R.id.buildmine);
+        //铁匠铺的建造按钮
+        final ImageButton bulidFabricate=(ImageButton)findViewById(R.id.buildfabricate);
+        //医院的建造按钮
+        final ImageButton bulidHospital=(ImageButton)findViewById(R.id.buildhospital);
+        //为ImageButton添加监听器
+        buildButtonClick(bulidHouse,0);
+        buildButtonClick(bulidFood,1);
+        buildButtonClick(bulidWood,2);
+        buildButtonClick(bulidMine,3);
+        buildButtonClick(bulidFabricate,4);
+        buildButtonClick(bulidHospital,5);
+        //为返回按钮添加监听器
         imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
     }
 
@@ -338,7 +388,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.make_weapon);
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
-        imageClick(arraw3,R.drawable.arraw3pressed,R.drawable.arraw3,1);
+        imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
     }
 
     /**
@@ -349,7 +399,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.player_information);
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
-        imageClick(arraw3,R.drawable.arraw3pressed,R.drawable.arraw3,1);
+        imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
     }
 
     /**
@@ -458,6 +508,47 @@ public class MainActivity extends Activity {
                 if (chat.isChecked()) {
                     Intent intent = new Intent(MainActivity.this,SmartChatActivity.class);
                     startActivity(intent);
+                }
+            }
+        });
+    }
+
+    /**
+     * 未建造的房屋加上黑色的滤镜
+     */
+    public void showBlack(final ImageView[] image,Player player) {
+        for (int i = 0; i < image.length; i++) {
+            if (player.getBuilding()[i].getLevel() == 0) {
+                image[i].setColorFilter(Color.BLACK);
+            }
+        }
+    }
+
+    /*
+    *为ImageButton添加监听器
+    * 在建造页面按下建造按钮之后，扣除相应的费用，并且建造相应的房屋
+    * */
+    public void buildButtonClick(final ImageButton button,final int type){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //判断是否已经满级
+                if(player.getBuilding()[type].getLevel()!=3){
+                    //若未满级，判断资源是否足够
+                    int[] res=player.getBuilding()[type].cost();
+                    if(player.getFood()>=res[0]&&player.getWood()>=res[1]&&player.getMine()>=res[2]){
+                        player.getBuilding()[type].addLevel();
+                        player.setFood(player.getFood() - res[0]);
+                        player.setWood(player.getWood() - res[1]);
+                        player.setMine(player.getMine() - res[2]);
+                        Toast.makeText(getApplicationContext(),"建造成功", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),"资源不足", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"该建筑已经满级", Toast.LENGTH_SHORT).show();
                 }
             }
         });
