@@ -61,11 +61,10 @@ public class MainActivity extends Activity {
     GameView gameView;
     //关数
     public int levelId = 0;
-
+    //控制资源增长的线程
     ResourceThread resource;
     //声明player
     Player player;
-    //判断控制资源增长的线程是否已经开启
     //    界面转换控制
     public Handler hd = new Handler() {
         @Override
