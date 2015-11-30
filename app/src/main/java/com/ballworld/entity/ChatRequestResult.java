@@ -3,7 +3,7 @@ package com.ballworld.entity;
 /**
  * Created by duocai at 19:55 on 2015/11/10.
  */
-public class Result {
+public class ChatRequestResult {
     private int code;
     private String text;
 

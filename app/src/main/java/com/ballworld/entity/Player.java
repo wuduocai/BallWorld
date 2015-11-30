@@ -4,6 +4,14 @@ package com.ballworld.entity;
  * Created by duocai at 18:23 on 2015/11/14.
  */
 public class Player {
+    public static final String FOOD = "food";
+    public static final String WOOD = "wood";
+    public static final String MINE = "mine";
+    public static final String HP = "hp";
+    public static final String LEVEL = "level";
+    public static final String[] BUILDING_LEVEL = {"level0","level1","level2","level3","level4","level5"};
+
+
     //食物的数量
     private int food;
     //木材的数量
