@@ -39,6 +39,7 @@ import com.ballworld.view.WelcomeView;
 
 import java.util.HashMap;
 
+import cn.sharerec.recorder.impl.GLRecorder;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
@@ -77,8 +78,8 @@ public class MainActivity extends Activity {
     HashMap<Integer, Integer> soundPoolMap; //记录声音池返回的资源id
     boolean backgroundSoundFlag = true;//是否播放背景音乐
     boolean knockWallSoundFlag = true;//撞壁音效
-    //    boolean recordGameFlag = true;//是否录屏
-//    public GLRecorder recorder;//录屏工具
+    boolean recordGameFlag = true;//是否录屏
+    public GLRecorder recorder;//录屏工具
     //判断控制资源增长的线程是否已经开启
     //    界面转换控制
     public Handler hd = new Handler() {
@@ -237,11 +238,11 @@ public class MainActivity extends Activity {
     private void goToMenuView() {
         this.setContentView(R.layout.menu);
 
-//        if (currentView == WhichView.CASUAL_MODE_VIEW) {
+        if (currentView == WhichView.CASUAL_MODE_VIEW) {
 //            recorder.stopRecorder();
 //            recorder.setText("我的小球世界");
 //            recorder.showShare();
-//        }
+        }
 
         currentView = WhichView.MAIN_MENU;
 
@@ -427,8 +428,11 @@ public class MainActivity extends Activity {
             if (gameView == null)
                 gameView = new GameView(this, levelId, null);//模拟第0（1）关
             currentView = WhichView.CASUAL_GAME_VIEW;//休闲模式
+            gameView.requestFocus();//获得焦点
+            gameView.setFocusableInTouchMode(true);//可触控
+            this.setContentView(gameView);
 
-//            GLRecorder recorder = new SrecGLSurfaceView(this) {
+//            recorder = new SrecGLSurfaceView(this) {
 //                @Override
 //                protected String getShareRecAppkey() {
 //                    return "cfbc621ddad0";
@@ -437,16 +441,18 @@ public class MainActivity extends Activity {
 //            if (recorder.isAvailable()){
 //                Toast.makeText(MainActivity.this, "recorder isAvailable", Toast.LENGTH_SHORT).show();
 //                // 启动录制
-//                recorder.startRecorder();
+//               recorder.startRecorder();
 //            }
         } else {
             if (gameView == null)
                 gameView = new GameView(this, levelId, player);//模拟第0（1）关
             currentView = WhichView.STORY_GAME_VIEW;//故事模式
+
+            gameView.requestFocus();//获得焦点
+            gameView.setFocusableInTouchMode(true);//可触控
+            this.setContentView(gameView);
         }
-        gameView.requestFocus();//获得焦点
-        gameView.setFocusableInTouchMode(true);//可触控
-        this.setContentView(gameView);
+
     }
 
     /**

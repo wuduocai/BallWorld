@@ -187,6 +187,7 @@ public class BallMoveThread extends Thread {
         ballX = gameView.map[0].length * UNIT_SIZE / 2 + ballX;
         ballZ = gameView.map.length * UNIT_SIZE / 2 + ballZ;
         gameView.coverBlocks[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] = 0;
+        //zha dan
         if (gameView.mapBomb[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] == 1) {
             gameView.mapBomb[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] = 2;
             gameView.ball.ballVX = gameView.ball.ballVZ = 0f;

@@ -31,6 +31,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+
     <!-- <uses-permission android:name="android.permission.BROADCAST_STICKY "/> -->
     <application
         android:allowBackup="true"
@@ -66,18 +68,18 @@
             </intent-filter>
         </activity>
 
-        <!-- 调用新浪原生SDK，需要注册的回调activity -->
-        <activity
-            android:name="cn.sharesdk.sina.weibo.SinaActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-            <intent-filter>
-                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+        <!--&lt;!&ndash; 调用新浪原生SDK，需要注册的回调activity &ndash;&gt;-->
+        <!--<activity-->
+            <!--android:name="cn.sharesdk.sina.weibo.SinaActivity"-->
+            <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
+            <!--android:screenOrientation="landscape"-->
+            <!--android:theme="@android:style/Theme.Translucent.NoTitleBar" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
 
         <!-- 智能聊天 -->
         <activity

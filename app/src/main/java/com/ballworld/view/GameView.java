@@ -155,6 +155,7 @@ public class GameView extends GLSurfaceView {
         coverBlock = new CoverBlock(1, 1);
 
         //设置渲染器
+        //this.setEGLContextClientVersion(2);
         myRenderer = new MyRenderer();
         this.setRenderer(myRenderer);
         //设置渲染模式为自动渲染，
