@@ -1,5 +1,6 @@
 package com.ballworld.view;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
@@ -25,6 +26,8 @@ import java.io.InputStream;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
+
+import cn.sharerec.recorder.impl.SrecGLSurfaceView;
 
 import static com.ballworld.util.Constant.ALL_INIT_LOCATION;
 import static com.ballworld.util.Constant.ALL_MAP;
@@ -78,10 +81,10 @@ public class GameView extends GLSurfaceView {
     private int targetId;//终点目标
     private int numberId;//数字
 
-    public GameView(MainActivity activity, int levelId, Player player) {
+    public GameView(Context activity, int levelId, Player player) {
         super(activity);
         //初始化变量
-        this.activity = activity;
+        this.activity = (MainActivity)activity;
         this.levelId = levelId;
         this.player = player;
         //摄像机
@@ -487,5 +490,12 @@ public class GameView extends GLSurfaceView {
             float[] specularParams = {1f, 1f, 1f, 1.0f};//光参数 RGBA
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, specularParams, 0);
         }
+    }
+
+    /**
+     * 实现录屏
+     */
+    protected String getShareRecAppkey() {
+        return "cfbc621ddad0";
     }
 }

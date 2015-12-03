@@ -39,15 +39,21 @@ import com.ballworld.view.WelcomeView;
 
 import java.util.HashMap;
 
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+
 import static com.ballworld.util.Constant.SCREEN_HEIGHT;
 import static com.ballworld.util.Constant.SCREEN_WIDTH;
 import static com.ballworld.view.GameView.OnTouchListener;
 import static com.ballworld.view.GameView.ballGX;
 import static com.ballworld.view.GameView.ballGZ;
 
+//import cn.sharerec.recorder.impl.GLRecorder;
+//import cn.sharerec.recorder.impl.SrecGLSurfaceView;
+
 enum WhichView {
     WELCOME_VIEW, MAIN_MENU, SETTING_VIEW,
-    HELP_VIEW, CASUAL_GAME_VIEW,STORY_GAME_VIEW, CASUAL_MODE_VIEW, TOWN_VIEW
+    HELP_VIEW, CASUAL_GAME_VIEW, STORY_GAME_VIEW, CASUAL_MODE_VIEW, TOWN_VIEW
 }
 
 /**
@@ -71,6 +77,8 @@ public class MainActivity extends Activity {
     HashMap<Integer, Integer> soundPoolMap; //记录声音池返回的资源id
     boolean backgroundSoundFlag = true;//是否播放背景音乐
     boolean knockWallSoundFlag = true;//撞壁音效
+    //    boolean recordGameFlag = true;//是否录屏
+//    public GLRecorder recorder;//录屏工具
     //判断控制资源增长的线程是否已经开启
     //    界面转换控制
     public Handler hd = new Handler() {
@@ -228,6 +236,12 @@ public class MainActivity extends Activity {
      */
     private void goToMenuView() {
         this.setContentView(R.layout.menu);
+
+//        if (currentView == WhichView.CASUAL_MODE_VIEW) {
+//            recorder.stopRecorder();
+//            recorder.setText("我的小球世界");
+//            recorder.showShare();
+//        }
 
         currentView = WhichView.MAIN_MENU;
 
@@ -409,12 +423,23 @@ public class MainActivity extends Activity {
      * 进入游戏界面
      */
     private void goToGameView() {
-        if (currentView==WhichView.CASUAL_MODE_VIEW) {
+        if (currentView == WhichView.CASUAL_MODE_VIEW) {
             if (gameView == null)
                 gameView = new GameView(this, levelId, null);//模拟第0（1）关
             currentView = WhichView.CASUAL_GAME_VIEW;//休闲模式
-        }
-        else {
+
+//            GLRecorder recorder = new SrecGLSurfaceView(this) {
+//                @Override
+//                protected String getShareRecAppkey() {
+//                    return "cfbc621ddad0";
+//                }
+//            }.getRecorder();
+//            if (recorder.isAvailable()){
+//                Toast.makeText(MainActivity.this, "recorder isAvailable", Toast.LENGTH_SHORT).show();
+//                // 启动录制
+//                recorder.startRecorder();
+//            }
+        } else {
             if (gameView == null)
                 gameView = new GameView(this, levelId, player);//模拟第0（1）关
             currentView = WhichView.STORY_GAME_VIEW;//故事模式
@@ -462,6 +487,32 @@ public class MainActivity extends Activity {
     private void goToGameHelpView() {
         setContentView(R.layout.game_help);
         currentView = WhichView.HELP_VIEW;
+
+        ShareSDK.initSDK(this);
+        OnekeyShare oks = new OnekeyShare();
+        //关闭sso授权
+        oks.disableSSOWhenAuthorize();
+
+        // 分享时Notification的图标和文字  2.5.9以后的版本不调用此方法
+        //oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
+        // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
+        oks.setTitle("小球世界");
+        // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
+        oks.setTitleUrl("http://www.baidu.com");
+        // text是分享文本，所有平台都需要这个字段
+        oks.setText("我是分享文本");
+        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
+        oks.setImagePath("/sdcard/test.jpg");//确保SDcard下面存在此张图片
+        // url仅在微信（包括好友和朋友圈）中使用
+        oks.setUrl("http://sharesdk.cn");
+        // comment是我对这条分享的评论，仅在人人网和QQ空间使用
+        oks.setComment("我是测试评论文本");
+        // site是分享此内容的网站名称，仅在QQ空间使用
+        oks.setSite(getString(R.string.app_name));
+        // siteUrl是分享此内容的网站地址，仅在QQ空间使用
+        oks.setSiteUrl("http://sharesdk.cn");
+        // 启动分享GUI
+        oks.show(this);
     }
 
     /**
@@ -601,6 +652,18 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
+    }
+
+    /**
+     * 显示指导框
+     * @param originViw
+     * @param guide
+     * @param me
+     */
+    public void showGuidance(View originViw, String[] guide, String[] me) {
+        boolean guideFlag = true;
+        int time = Math.min(guide.length,me.length);
+
     }
 
     @Override

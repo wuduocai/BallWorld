@@ -17,8 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.baidu.voicerecognition.android.ui.BaiduASRDigitalDialog;
-import com.baidu.voicerecognition.android.ui.DialogRecognitionListener;
 import com.ballworld.entity.ChatMessage;
 import com.ballworld.entity.ChatMessageAdapter;
 import com.ballworld.util.HttpUtils;
@@ -39,9 +37,6 @@ public class SmartChatActivity extends Activity {
     private ImageButton speak;
     private Button mSendMsg;//发消息控件
 
-    //百度语音识别对话框
-    private BaiduASRDigitalDialog mDialog = null;
-    private DialogRecognitionListener mDialogListener = null;
     //应用授权信息 ，这里使用了官方SDK中的参数，如果需要，请自行申请，并修改为自己的授权信息
     private String API_KEY = "kCzxL7IWZtbmuyZ0TMCBfpZY";
     private String SECRET_KEY = "012c3374ffc0670cc07d64ccda7f1a16";
@@ -75,39 +70,6 @@ public class SmartChatActivity extends Activity {
     }
 
     /**
-     * 初始化百度语音识别
-     */
-    public void initBaiduListener() {
-        //初始化百度语音识别
-        if (mDialog == null) {
-            Bundle params = new Bundle();
-            //设置API_KEY, SECRET_KEY
-            params.putString(BaiduASRDigitalDialog.PARAM_API_KEY, API_KEY);
-            params.putString(BaiduASRDigitalDialog.PARAM_SECRET_KEY, SECRET_KEY);
-            //设置语音识别对话框为蓝色高亮主题
-            params.putInt(BaiduASRDigitalDialog.PARAM_DIALOG_THEME, BaiduASRDigitalDialog.THEME_BLUE_LIGHTBG);
-            //实例化百度语音识别对话框
-            mDialog = new BaiduASRDigitalDialog(this, params);
-            //设置百度语音识别回调接口
-            mDialogListener = new DialogRecognitionListener() {
-
-                @Override
-                public void onResults(Bundle mResults) {
-                    ArrayList<String> rs = mResults != null ? mResults.getStringArrayList(RESULTS_RECOGNITION) : null;
-                    if (rs != null && rs.size() > 0) {
-                        //InputBox.setText(rs.get(0));
-                        Toast.makeText(SmartChatActivity.this, rs.get(0),
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-
-            };
-        }
-        mDialog.setDialogRecognitionListener(mDialogListener);
-    }
-
-    /**
      * 初始化监听器
      */
     private void initListener() {
@@ -116,6 +78,7 @@ public class SmartChatActivity extends Activity {
             public void onClick(View v) {
                 Toast.makeText(SmartChatActivity.this, "正在努力实现中",
                         Toast.LENGTH_SHORT).show();
+                //mDialog.show();
             }
         });
         mSendMsg.setOnClickListener(new OnClickListener() {
@@ -196,9 +159,6 @@ public class SmartChatActivity extends Activity {
 
     @Override
     protected void onDestroy(){
-        if (mDialog != null) {
-            mDialog.dismiss();
-        }
         super.onDestroy();
     }
 
