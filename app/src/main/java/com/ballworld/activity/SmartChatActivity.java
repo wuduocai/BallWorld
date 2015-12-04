@@ -112,7 +112,7 @@ public class SmartChatActivity extends Activity implements TTSListener{
 
                 }
 
-            }; 
+            };
         }
         mDialog.setDialogRecognitionListener(mDialogListener);
     }

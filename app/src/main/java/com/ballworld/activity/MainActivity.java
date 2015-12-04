@@ -31,11 +31,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ballworld.entity.Player;
+import com.ballworld.thread.GuideThread;
 import com.ballworld.thread.ResourceThread;
+import com.ballworld.util.MyTTSListener;
 import com.ballworld.util.RotateUtil;
 import com.ballworld.view.CoverFlowGallery;
 import com.ballworld.view.GameView;
 import com.ballworld.view.WelcomeView;
+import com.turing.androidsdk.constant.Constant;
+import com.turing.androidsdk.tts.TTSManager;
 
 import java.util.HashMap;
 
@@ -49,12 +53,10 @@ import static com.ballworld.view.GameView.OnTouchListener;
 import static com.ballworld.view.GameView.ballGX;
 import static com.ballworld.view.GameView.ballGZ;
 
-//import cn.sharerec.recorder.impl.GLRecorder;
-//import cn.sharerec.recorder.impl.SrecGLSurfaceView;
-
 enum WhichView {
     WELCOME_VIEW, MAIN_MENU, SETTING_VIEW,
-    HELP_VIEW, CASUAL_GAME_VIEW, STORY_GAME_VIEW, CASUAL_MODE_VIEW, TOWN_VIEW
+    HELP_VIEW, CASUAL_GAME_VIEW, STORY_GAME_VIEW, CASUAL_MODE_VIEW, TOWN_VIEW,
+    GUIDE
 }
 
 /**
@@ -65,12 +67,23 @@ public class MainActivity extends Activity {
     public WhichView currentView;
     //关数
     public int levelId = 0;
+    public GLRecorder recorder;//录屏工具
     //view
     WelcomeView welcomeView;
     GameView gameView;
+    //thread
     ResourceThread resource;
+    GuideThread guideThread;
     //声明player
     Player player;
+    //指导页面变量
+    public String[] guide;//指导框对话
+    String[] me;
+    TTSManager ttsManager;
+    TextView guideView;
+    TextView meView;
+    ImageView skipButton;
+    public int curText;
     //功能引用
     Vibrator myVibrator;//声明振动器
     boolean shakeflag = true;//是否震动
@@ -78,8 +91,6 @@ public class MainActivity extends Activity {
     HashMap<Integer, Integer> soundPoolMap; //记录声音池返回的资源id
     boolean backgroundSoundFlag = true;//是否播放背景音乐
     boolean knockWallSoundFlag = true;//撞壁音效
-    boolean recordGameFlag = true;//是否录屏
-    public GLRecorder recorder;//录屏工具
     //判断控制资源增长的线程是否已经开启
     //    界面转换控制
     public Handler hd = new Handler() {
@@ -122,6 +133,7 @@ public class MainActivity extends Activity {
             }
         }
     };
+    boolean recordGameFlag = true;//是否录屏
     SensorManager mySensorManager;    //SensorManager对象引用，后注册手机方向传感器
     //监听传感器
     private SensorListener mySensorListener = new SensorListener() {
@@ -238,11 +250,11 @@ public class MainActivity extends Activity {
     private void goToMenuView() {
         this.setContentView(R.layout.menu);
 
-        if (currentView == WhichView.CASUAL_MODE_VIEW) {
-//            recorder.stopRecorder();
-//            recorder.setText("我的小球世界");
-//            recorder.showShare();
-        }
+//        if (currentView == WhichView.CASUAL_MODE_VIEW) {
+////            recorder.stopRecorder();
+////            recorder.setText("我的小球世界");
+////            recorder.showShare();
+//        }
 
         currentView = WhichView.MAIN_MENU;
 
@@ -260,7 +272,11 @@ public class MainActivity extends Activity {
         storyMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hd.sendEmptyMessage(1);//城镇界面
+                //hd.sendEmptyMessage(1);//城镇界面
+                //指导demo
+                showGuide(1,
+                        new String[]{"欢迎玩小球世界", "你一定会觉得它很棒的"},
+                        new String[]{"en", "好期待啊"});
             }
         });
         casualMode.setOnClickListener(new View.OnClickListener() {
@@ -425,13 +441,8 @@ public class MainActivity extends Activity {
      */
     private void goToGameView() {
         if (currentView == WhichView.CASUAL_MODE_VIEW) {
-            if (gameView == null)
-                gameView = new GameView(this, levelId, null);//模拟第0（1）关
+            gameView = new GameView(this, levelId, null);//模拟第0（1）关
             currentView = WhichView.CASUAL_GAME_VIEW;//休闲模式
-            gameView.requestFocus();//获得焦点
-            gameView.setFocusableInTouchMode(true);//可触控
-            this.setContentView(gameView);
-
 //            recorder = new SrecGLSurfaceView(this) {
 //                @Override
 //                protected String getShareRecAppkey() {
@@ -444,15 +455,13 @@ public class MainActivity extends Activity {
 //               recorder.startRecorder();
 //            }
         } else {
-            if (gameView == null)
-                gameView = new GameView(this, levelId, player);//模拟第0（1）关
+            gameView = new GameView(this, levelId, player);//模拟第0（1）关
             currentView = WhichView.STORY_GAME_VIEW;//故事模式
-
-            gameView.requestFocus();//获得焦点
-            gameView.setFocusableInTouchMode(true);//可触控
-            this.setContentView(gameView);
         }
 
+        gameView.requestFocus();//获得焦点
+        gameView.setFocusableInTouchMode(true);//可触控
+        this.setContentView(gameView);
     }
 
     /**
@@ -470,7 +479,11 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position < 4 && cfg.galleryCenterPoint == cfg.getViewCenterPoint(view)) {
                     levelId = position;
-                    hd.sendEmptyMessage(5);//游戏界面
+                    //hd.sendEmptyMessage(5);//游戏界面
+                    //显示指导demo，双线程比较复杂，就这样用着
+                    showGuide(5,
+                            new String[]{"欢迎玩小球世界", "你一定会觉得它很棒的"},
+                            new String[]{"en", "好期待啊"});
                 }
             }
         });
@@ -596,6 +609,44 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * 无自动线程的guideview，可用
+     * @param destView
+     * @param guide
+     * @param me
+     */
+    public void showGuide(final int destView, final String[] guide,final String[] me) {
+        setContentView(R.layout.guidance);
+        currentView = WhichView.GUIDE;
+
+        //初始化控件
+        final TTSManager ttsManager = new TTSManager(this,new MyTTSListener());
+        final TextView guideView = (TextView)findViewById(R.id.guide);
+        final TextView meView = (TextView)findViewById(R.id.me);
+        ImageView skipButton = (ImageView)findViewById(R.id.skip);
+        curText=0;
+
+        //显示对话
+        ttsManager.startTTS(guide[curText], Constant.BaiDu);//语音模拟
+        guideView.setText(guide[curText]);
+        meView.setText(me[curText]);
+
+        //更换动画
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                curText++;
+                if (curText < guide.length) {
+                    ttsManager.startTTS(guide[curText], Constant.BaiDu);//语音模拟
+                    guideView.setText(guide[curText]);
+                    meView.setText(me[curText]);
+                } else {//语音放完切换到目标页面
+                    hd.sendEmptyMessage(destView);
+                }
+            }
+        });
+    }
+
     /*
     *为ImageButton添加监听器
     * 在建造页面按下建造按钮之后，扣除相应的费用，并且建造相应的房屋
@@ -661,19 +712,28 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 显示指导框
-     * @param originViw
-     * @param guide
-     * @param me
+     * 初始化guideview控件
+     * @param destView
      */
-    public void showGuidance(View originViw, String[] guide, String[] me) {
-        boolean guideFlag = true;
-        int time = Math.min(guide.length,me.length);
+    public void initGuideView(final int destView) {
+        ttsManager = new TTSManager(this, new MyTTSListener());
+        guideView = (TextView) findViewById(R.id.guide);
+        meView = (TextView) findViewById(R.id.me);
+        skipButton = (ImageView) findViewById(R.id.skip);
 
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                guideThread.guideFlag=false;//结束线程
+                hd.sendEmptyMessage(destView);
+            }
+        });
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);//调音量
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (currentView == WhichView.SETTING_VIEW ||
                     currentView == WhichView.HELP_VIEW ||
@@ -681,7 +741,19 @@ public class MainActivity extends Activity {
                 hd.sendEmptyMessage(0);
             }
         }
-        return true;
+        else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+            mAudioManager.adjustStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.ADJUST_RAISE,
+                    AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+        }
+        else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            mAudioManager.adjustStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.ADJUST_LOWER,
+                    AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+        }
+        return true;//父类不再操作
     }
 
     @Override

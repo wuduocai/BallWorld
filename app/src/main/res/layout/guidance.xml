@@ -40,7 +40,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/id_from_msg_info"
+                android:id="@+id/guide"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/chatfrom_bg_normal"
@@ -57,7 +57,7 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/id_to_msg_info"
+                android:id="@+id/me"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/chatto_bg_normal"
@@ -92,5 +92,6 @@
         android:layout_alignBottom="@id/guideLine"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/arraw1" />
+        android:src="@drawable/arraw1"
+        android:id="@+id/skip" />
 </RelativeLayout>

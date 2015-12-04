@@ -31,7 +31,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <!--<uses-feature android:glEsVersion="0x00020000" android:required="true" />-->
 
     <!-- <uses-permission android:name="android.permission.BROADCAST_STICKY "/> -->
     <application
