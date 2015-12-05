@@ -1,17 +1,21 @@
-package com.ballworld.entity;
+﻿package com.ballworld.entity;
 
 /**
  * Created by duocai at 18:23 on 2015/11/14.
  */
 public class Player {
+    public static final Player NIL = null;
     public static final String FOOD = "food";
     public static final String WOOD = "wood";
     public static final String MINE = "mine";
     public static final String HP = "hp";
     public static final String LEVEL = "level";
     public static final String[] BUILDING_LEVEL = {"level0","level1","level2","level3","level4","level5"};
+    public static final String DAMAGE = "damage";
+    public static final String DEFENSE = "defense";
+    public static final String LEVEL_ID = "levelId";//关卡
 
-
+    private  int levelId;
     //食物的数量
     private int food;
     //木材的数量
@@ -25,8 +29,10 @@ public class Player {
     //记录玩家的建筑
     private Buildings[] building;
     //记录玩家的装备
-
-
+    //攻击力
+    private int damage;
+    //防御力
+    private int defense;
 
     public Player(){
 
@@ -109,4 +115,27 @@ public class Player {
         building[renew.getType()]=renew;
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public int getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(int levelId) {
+        this.levelId = levelId;
+    }
 }

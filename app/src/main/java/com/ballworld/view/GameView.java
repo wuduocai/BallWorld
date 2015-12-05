@@ -1,5 +1,4 @@
-
-package com.ballworld.view;
+﻿package com.ballworld.view;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,7 +54,6 @@ public class GameView extends GLSurfaceView {
     public MainActivity activity;//调用该view的activity
     //关卡信息
     public int levelId;//关卡id
-    //玩家
     public Player player;
 
     //路面类型
@@ -96,16 +94,16 @@ public class GameView extends GLSurfaceView {
         //关卡速度,及其它特色
         switch (levelId) {
             case 0:
-                V_TENUATION=0.95f;
+                V_TENUATION = 0.95f;
                 break;
             case 1:
-                V_TENUATION=0.4f;
+                V_TENUATION = 0.4f;
                 break;
             case 2:
-                V_TENUATION=0.7f;
+                V_TENUATION = 0.7f;
                 break;
             case 3:
-                V_TENUATION=0.7f;
+                V_TENUATION = 0.7f;
         }
         //初始化地图上的对象
         map = ALL_MAP[levelId];//地图
@@ -160,7 +158,7 @@ public class GameView extends GLSurfaceView {
         this.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
         //开启小球移动线程
-        ballMoveThread = new BallMoveThread(this,player);
+        ballMoveThread = new BallMoveThread(this, player);
         ballMoveThread.start();
     }
 
@@ -410,16 +408,16 @@ public class GameView extends GLSurfaceView {
                         int iX = (int) (ballXTemp / UNIT_SIZE);
                         int iZ = (int) (ballZTemp / UNIT_SIZE);
                         //如果没有覆盖将数字提升到小球上方
-                        if(coverBlocks[i][j]==0&&iZ==i&&iX==j){
-                            number.y=1.5f;
-                            if (j<11)
-                                number.x+=UNIT_SIZE/3;
-                            else if (j>22)
-                                number.x-=UNIT_SIZE/3;
-                            if (i<6)
-                                number.z+=0.2f;
-                            else if (i>12)
-                                number.z-=0.2f;
+                        if (coverBlocks[i][j] == 0 && iZ == i && iX == j) {
+                            number.y = 1.5f;
+                            if (j < 11)
+                                number.x += UNIT_SIZE / 3;
+                            else if (j > 22)
+                                number.x -= UNIT_SIZE / 3;
+                            if (i < 6)
+                                number.z += 0.2f;
+                            else if (i > 12)
+                                number.z -= 0.2f;
                         }
                         number.drawSelf(gl, numberId);//绘制
                     }

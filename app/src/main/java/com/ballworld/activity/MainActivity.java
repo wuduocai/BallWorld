@@ -35,6 +35,7 @@ import com.ballworld.thread.GuideThread;
 import com.ballworld.thread.ResourceThread;
 import com.ballworld.util.MyTTSListener;
 import com.ballworld.util.RotateUtil;
+import com.ballworld.util.SQLiteUtil;
 import com.ballworld.view.CoverFlowGallery;
 import com.ballworld.view.GameView;
 import com.ballworld.view.WelcomeView;
@@ -84,6 +85,8 @@ public class MainActivity extends Activity {
     TextView meView;
     ImageView skipButton;
     public int curText;
+    //数据库
+    SQLiteUtil slu;
     //功能引用
     Vibrator myVibrator;//声明振动器
     boolean shakeflag = true;//是否震动
@@ -181,8 +184,24 @@ public class MainActivity extends Activity {
         mySensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);//获得SensorManager对象
         myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);//获得震动服务
         initSound();
+        initDataBase();
+        initPlayer();
         //进入欢迎界面
         goToWelcomeView();
+    }
+
+    /**
+     * 初始化玩家
+     */
+    public void initPlayer() {
+        player = slu.queryPlayer(1);
+    }
+
+    /**
+     * 初始化数据库
+     */
+    public void initDataBase() {
+        slu = new SQLiteUtil(this);
     }
 
     /**
@@ -249,6 +268,7 @@ public class MainActivity extends Activity {
      */
     private void goToMenuView() {
         this.setContentView(R.layout.menu);
+
 //        if (currentView == WhichView.CASUAL_MODE_VIEW) {
 ////            recorder.stopRecorder();
 ////            recorder.setText("我的小球世界");
@@ -258,8 +278,11 @@ public class MainActivity extends Activity {
         currentView = WhichView.MAIN_MENU;
 
         //实例化player
-        player = new Player(0, 0, 0);
-        resource = new ResourceThread(player, null);
+        if (player==null)
+            player = new Player(0, 0, 0);
+        if (resource == null)
+            resource = new ResourceThread(player, null);
+
         //get button
         ImageButton storyMode = (ImageButton) this.findViewById(R.id.storyModeButton),
                 casualMode = (ImageButton) this.findViewById(R.id.casualModeButton),
@@ -377,7 +400,7 @@ public class MainActivity extends Activity {
             imageClick(fabricate, R.drawable.fabricatepressed, R.drawable.fabricate, 3);
         }
         //对arraw1添加监听器，即go按钮
-        imageClick(arraw1, R.drawable.arraw1pressed, R.drawable.arraw1, 0);
+        imageClick(arraw1, R.drawable.arraw1pressed, R.drawable.arraw1, 5);
         //对arraw2添加监听器，即build按钮，前往建造房屋界面
         imageClick(arraw2, R.drawable.arraw2pressed, R.drawable.arraw2, 2);
         //add listener
@@ -439,7 +462,7 @@ public class MainActivity extends Activity {
      */
     private void goToGameView() {
         if (currentView == WhichView.CASUAL_MODE_VIEW) {
-            gameView = new GameView(this, levelId, null);//模拟第0（1）关
+            gameView = new GameView(this, levelId, Player.NIL);//模拟第0（1）关
             currentView = WhichView.CASUAL_GAME_VIEW;//休闲模式
 //            recorder = new SrecGLSurfaceView(this) {
 //                @Override
@@ -453,7 +476,7 @@ public class MainActivity extends Activity {
 //               recorder.startRecorder();
 //            }
         } else {
-            gameView = new GameView(this, levelId, player);//模拟第0（1）关
+            gameView = new GameView(this, player.getLevelId(), player);//模拟第0（1）关
             currentView = WhichView.STORY_GAME_VIEW;//故事模式
         }
 
@@ -769,6 +792,8 @@ public class MainActivity extends Activity {
     protected void onPause() //重写onPause方法
     {
         super.onPause();
+        if (player!=null)
+            slu.updatePlayer(player,1);
         mySensorManager.unregisterListener(mySensorListener);    //取消注册监听器
     }
 
