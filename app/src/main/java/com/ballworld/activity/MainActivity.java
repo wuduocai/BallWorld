@@ -574,15 +574,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.setting);
         currentView = WhichView.SETTING_VIEW;
 
-        //返回菜单
-        Button back = (Button) findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hd.sendEmptyMessage(0);
-            }
-        });
-
         //音效
         final CheckBox sound = (CheckBox) findViewById(R.id.sound);
         if (knockWallSoundFlag)

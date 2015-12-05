@@ -222,7 +222,7 @@ public class BallMoveThread extends Thread {
                 player.setHp(player.getHp() - (MAX_DAMAGE-player.getDefense()));
                 if (player.getHp() <= 0) {
                     this.flag = false;//停止线程
-                    player.setHp(5);//暂时模拟死亡效果
+                    player.setHp(1);//暂时模拟死亡效果
                     ttsManager.startTTS("Sorry,you died", Constant.XunFei);
                     //文字提醒
                     Message m = Message.obtain();
