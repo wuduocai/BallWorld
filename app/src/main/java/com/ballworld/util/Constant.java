@@ -8,6 +8,11 @@ public class Constant {
     public static int SCREEN_HEIGHT;
     public static int SCREEN_WIDTH;
 
+        //游戏逻辑变量
+        public static final int MAX_DAMAGE = 2;
+        public static final String[] TREASURE = {"千年寒冰","末影珍珠","七色灵芝","深海净水"};
+
+        //界面变量
     public static final float WALL_HEIGHT = 2f;//墙的高度
     public static final float UNIT_SIZE = 1.5f;//地面每个格子的大小
     public static final float FLOOR_Y = 0f;//地面的Y坐标
