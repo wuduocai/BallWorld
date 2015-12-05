@@ -1,4 +1,4 @@
-﻿package com.ballworld.activity;
+package com.ballworld.activity;
 
 import android.app.Activity;
 import android.app.Service;
@@ -59,6 +59,11 @@ public class MainActivity extends Activity {
     GameView gameView;
     //关数
     public int levelId = 0;
+
+    ResourceThread resource;
+    //声明player
+    Player player;
+    //判断控制资源增长的线程是否已经开启
     //    界面转换控制
     public Handler hd = new Handler() {
         @Override
@@ -222,6 +227,10 @@ public class MainActivity extends Activity {
     private void goToMenuView() {
         this.setContentView(R.layout.menu);
 
+        //实例化player
+        player=new Player(0,0,0);
+        resource=new ResourceThread(player,null);
+
         //get button
         ImageButton storyMode = (ImageButton) this.findViewById(R.id.storyModeButton),
                 casualMode = (ImageButton) this.findViewById(R.id.casualModeButton),
@@ -253,6 +262,7 @@ public class MainActivity extends Activity {
                 hd.sendEmptyMessage(7);//帮助界面
             }
         });
+
     }
 
     /**
@@ -284,8 +294,12 @@ public class MainActivity extends Activity {
         final TextView foodstorage=(TextView)findViewById(R.id.foodstorage);
         final TextView woodstorage=(TextView)findViewById(R.id.woodstorage);
         final TextView minestorage=(TextView)findViewById(R.id.minestorage);
-        //用于更新textview的handler
-        Handler handler=new Handler(){
+
+        foodstorage.setText(""+player.getFood());
+        woodstorage.setText(""+player.getWood());
+        minestorage.setText(""+player.getMine());
+
+        resource.setHandler(new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 Bundle bundle=msg.getData();
@@ -293,13 +307,12 @@ public class MainActivity extends Activity {
                 woodstorage.setText(""+bundle.getInt("wood"));
                 minestorage.setText(""+bundle.getInt("mine"));
             }
-        };
-
-        //实例化player
-        Player player=new Player(0,0,0);
-        //启动resource线程，自动增加资源
-        Thread resource=new ResourceThread(player,handler);
-        resource.start();
+        });
+        if(!resource.getFlag()){
+            //用于更新textview的handler
+            resource.start();
+            resource.setFlag(true);
+        }
         //对头像添加监听器
         imageClick(person,R.drawable.head,R.drawable.head,4);
         //对医院添加监听器

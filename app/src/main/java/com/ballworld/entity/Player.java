@@ -1,4 +1,4 @@
-﻿package com.ballworld.entity;
+package com.ballworld.entity;
 
 /**
  * Created by duocai at 18:23 on 2015/11/14.
@@ -14,7 +14,9 @@ public class Player {
     private int hp;
     //level
     private int level;
-    //记录as
+    //记录玩家的建筑
+    private Buildings[] building=new Buildings[6];
+
 
     public Player(){
 
@@ -65,6 +67,18 @@ public class Player {
 
     public void setWood(int wood) {
         this.wood = wood;
+    }
+
+    public Buildings[] getBuilding() {
+        return this.building;
+    }
+
+    public void setBuilding(Buildings[] building) {
+        this.building = building;
+    }
+
+    public void setBuilding(Buildings[] building,Buildings renew){
+        building[renew.getType()]=renew;
     }
 
 }

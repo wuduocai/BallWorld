@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ballworld.activity">
-<<<<<<< HEAD
-    <!--请求权限-->
-    <uses-permission android:name="android.permission.VIBRATE"/><!--震动器-->
-=======
-
     <!-- 请求权限 -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- 震动器 -->
@@ -25,17 +20,13 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <!--<uses-permission android:name="android.permission.BROADCAST_STICKY "/>-->
->>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-<<<<<<< HEAD
-=======
         <!--主activity-->
->>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -45,8 +36,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
-=======
 
         <!--一键分享-->
         <activity
@@ -82,7 +71,6 @@
         <activity
             android:name=".SmartChatActivity"
             android:label="@string/title_activity_samrt_chat"></activity>
->>>>>>> 01e843e2c2e19ad6bfab9c2690712dd614b3c4b9
     </application>
 
 </manifest>
