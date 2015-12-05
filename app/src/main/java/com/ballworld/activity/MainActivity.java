@@ -1,4 +1,4 @@
-﻿package com.ballworld.activity;
+package com.ballworld.activity;
 
 import android.app.Activity;
 import android.app.Service;
@@ -71,8 +71,6 @@ public class MainActivity extends Activity {
     //view
     WelcomeView welcomeView;
     GameView gameView;
-    //关数
-    public int levelId = 0;
     //thread
     ResourceThread resource;
     GuideThread guideThread;
@@ -336,8 +334,8 @@ public class MainActivity extends Activity {
         woodstorage.setText("" + player.getWood());
         minestorage.setText("" + player.getMine());
 
-        //将未建造的建筑加上黑色的滤镜
-        showBlack(new ImageView[]{house, food, wood, mine, fabricate, hospital}, player);
+        //将未建造的建筑的透明度设为0
+        changeAlpha(new ImageView[]{house, food, wood, mine, fabricate, hospital}, player);
         //用于更新textview的handler
         resource.setHandler(new Handler() {
             @Override
@@ -599,12 +597,12 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 未建造的房屋加上黑色的滤镜
+     * 未建造的房屋变透明
      */
-    public void showBlack(final ImageView[] image, Player player) {
+    public void changeAlpha(final ImageView[] image, Player player) {
         for (int i = 0; i < image.length; i++) {
             if (player.getBuilding()[i].getLevel() == 0) {
-                image[i].setColorFilter(Color.BLACK);
+                image[i].setAlpha(0);
             }
         }
     }
