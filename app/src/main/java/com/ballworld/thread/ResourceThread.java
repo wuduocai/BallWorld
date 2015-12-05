@@ -1,4 +1,4 @@
-package com.ballworld.thread;
+﻿package com.ballworld.thread;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,7 +36,7 @@ public class ResourceThread extends Thread {
             msg.setData(bundle);
             handler.sendMessage(msg);//通过handler对象发送消息
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

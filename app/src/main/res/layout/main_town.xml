@@ -136,7 +136,6 @@
         android:clickable="true"
         android:focusable="true"
         android:longClickable="true" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -149,7 +148,6 @@
         android:background="@drawable/minebar"
         android:gravity="center_vertical|right"
         android:paddingRight="8dp"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -173,7 +171,5 @@
         android:background="@drawable/foodbar"
         android:gravity="center_vertical|right"
         android:paddingRight="8dp"/>
-
-
 
 </RelativeLayout>

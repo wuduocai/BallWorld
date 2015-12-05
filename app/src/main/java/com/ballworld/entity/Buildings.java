@@ -1,4 +1,4 @@
-package com.ballworld.entity;
+﻿package com.ballworld.entity;
 
 /**
  * Created by mac on 2015/11/26.
@@ -20,7 +20,6 @@ public class Buildings {
         this.type=type;
         this.level=level;
     }
-
     //为房屋升级,最多为3级
     public void addLevel(){
         if(this.getLevel()!=3){
@@ -118,7 +117,6 @@ public class Buildings {
         output[2]=mine[this.getLevel()];
         return output;
     }
-
     //get与set方法
 
     public int getType() {
