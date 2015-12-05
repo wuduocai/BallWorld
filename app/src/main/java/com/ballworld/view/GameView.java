@@ -1,4 +1,3 @@
-﻿
 package com.ballworld.view;
 
 import android.graphics.Bitmap;
@@ -10,6 +9,7 @@ import android.view.MotionEvent;
 
 import com.ballworld.activity.MainActivity;
 import com.ballworld.activity.R;
+import com.ballworld.entity.Player;
 import com.ballworld.mapEntity.Ball;
 import com.ballworld.mapEntity.Bomb;
 import com.ballworld.mapEntity.CoverBlock;
@@ -54,6 +54,7 @@ public class GameView extends GLSurfaceView {
     public MainActivity activity;//调用该view的activity
     //关卡信息
     public int levelId;//关卡id
+    public Player player;
 
     //路面类型
     public int[][] mapBomb;//对应关卡的洞数组
@@ -75,11 +76,12 @@ public class GameView extends GLSurfaceView {
     private int targetId;//终点目标
     private int numberId;//数字
 
-    public GameView(MainActivity activity, int levelId) {
+    public GameView(MainActivity activity, int levelId, Player player) {
         super(activity);
         //初始化变量
         this.activity = activity;
         this.levelId = levelId;
+        this.player = player;
         //摄像机
         tx = 0;//摄像机目标位置
         ty = 0;
@@ -92,16 +94,16 @@ public class GameView extends GLSurfaceView {
         //关卡速度,及其它特色
         switch (levelId) {
             case 0:
-                V_TENUATION=0.95f;
+                V_TENUATION = 0.95f;
                 break;
             case 1:
-                V_TENUATION=0.4f;
+                V_TENUATION = 0.4f;
                 break;
             case 2:
-                V_TENUATION=0.7f;
+                V_TENUATION = 0.7f;
                 break;
             case 3:
-                V_TENUATION=0.7f;
+                V_TENUATION = 0.7f;
         }
         //初始化地图上的对象
         map = ALL_MAP[levelId];//地图
@@ -156,7 +158,7 @@ public class GameView extends GLSurfaceView {
         this.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
         //开启小球移动线程
-        ballMoveThread = new BallMoveThread(this);
+        ballMoveThread = new BallMoveThread(this, player);
         ballMoveThread.start();
     }
 
@@ -406,16 +408,16 @@ public class GameView extends GLSurfaceView {
                         int iX = (int) (ballXTemp / UNIT_SIZE);
                         int iZ = (int) (ballZTemp / UNIT_SIZE);
                         //如果没有覆盖将数字提升到小球上方
-                        if(coverBlocks[i][j]==0&&iZ==i&&iX==j){
-                            number.y=1.5f;
-                            if (j<11)
-                                number.x+=UNIT_SIZE/3;
-                            else if (j>22)
-                                number.x-=UNIT_SIZE/3;
-                            if (i<6)
-                                number.z+=0.2f;
-                            else if (i>12)
-                                number.z-=0.2f;
+                        if (coverBlocks[i][j] == 0 && iZ == i && iX == j) {
+                            number.y = 1.5f;
+                            if (j < 11)
+                                number.x += UNIT_SIZE / 3;
+                            else if (j > 22)
+                                number.x -= UNIT_SIZE / 3;
+                            if (i < 6)
+                                number.z += 0.2f;
+                            else if (i > 12)
+                                number.z -= 0.2f;
                         }
                         number.drawSelf(gl, numberId);//绘制
                     }

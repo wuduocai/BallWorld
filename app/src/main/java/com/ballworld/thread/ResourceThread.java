@@ -1,4 +1,4 @@
-﻿package com.ballworld.thread;
+package com.ballworld.thread;
 
 import android.os.Bundle;
 import android.os.Handler;

@@ -1,9 +1,14 @@
 package com.ballworld.thread;
 
+import android.os.Looper;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.ballworld.entity.Player;
+import com.ballworld.util.MyTTSListener;
 import com.ballworld.view.GameView;
+import com.turing.androidsdk.constant.Constant;
+import com.turing.androidsdk.tts.TTSManager;
 
 import static com.ballworld.util.Constant.UNIT_SIZE;
 import static com.ballworld.util.Constant.VZ_TENUATION;
@@ -187,7 +192,7 @@ public class BallMoveThread extends Thread {
         ballX = gameView.map[0].length * UNIT_SIZE / 2 + ballX;
         ballZ = gameView.map.length * UNIT_SIZE / 2 + ballZ;
         gameView.coverBlocks[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] = 0;
-        //zha dan
+        //碰到炸弹
         if (gameView.mapBomb[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] == 1) {
             gameView.mapBomb[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] = 2;
             gameView.ball.ballVX = gameView.ball.ballVZ = 0f;
@@ -199,7 +204,30 @@ public class BallMoveThread extends Thread {
                 e.printStackTrace();
             }
 
-            //声效，震动等
+            //回到剧情界面
+            if (player==Player.NIL) {
+                Looper.prepare();//为了在线程内创建handler，下面的函数会这么做
+                Toast.makeText(gameView.activity,"你被炸死了",Toast.LENGTH_SHORT).show();
+                Looper.loop();//停止，呼应prepare
+                gameView.activity.hd.sendEmptyMessage(0);
+            }
+            else {
+                player.setHp(player.getHp() - 1);
+                if (player.getHp()<=0) {
+                    player.setHp(5);//暂时模拟死亡效果
+                    Looper.prepare();//为了在线程内创建handler，下面的函数会这么做
+                    Toast.makeText(gameView.activity,"你被炸死了",Toast.LENGTH_SHORT).show();
+                    Looper.loop();//停止，呼应prepare
+                    gameView.activity.hd.sendEmptyMessage(1);
+                }
+                else {
+                    TTSManager ttsManager = new TTSManager(gameView.activity,new MyTTSListener());
+                    ttsManager.startTTS("要小心哦", Constant.XunFei);
+                    Looper.prepare();//为了在线程内创建handler，下面的函数会这么做
+                    Toast.makeText(gameView.activity,"你损失了1滴血",Toast.LENGTH_SHORT).show();
+                    Looper.loop();//停止，呼应prepare
+                }
+            }
         }
 
         //到达目标
@@ -214,9 +242,20 @@ public class BallMoveThread extends Thread {
             //声效
 
             //回到剧情界面
-            if (player==null)
+            if (player==Player.NIL) {
+                TTSManager ttsManager = new TTSManager(gameView.activity,new MyTTSListener());
+                ttsManager.startTTS("congratulations", Constant.XunFei);
+                Looper.prepare();//为了在线程内创建handler，下面的函数会这么做
+                Toast.makeText(gameView.activity,"you win",Toast.LENGTH_SHORT).show();
+                Looper.loop();//停止，呼应prepare
                 gameView.activity.hd.sendEmptyMessage(0);
+            }
             else {
+                TTSManager ttsManager = new TTSManager(gameView.activity,new MyTTSListener());
+                ttsManager.startTTS("congratulations", Constant.XunFei);
+                Looper.prepare();//为了在线程内创建handler，下面的函数会这么做
+                Toast.makeText(gameView.activity,"通过关卡，获得XXX",Toast.LENGTH_SHORT).show();
+                Looper.loop();//停止，呼应prepare
                 player.setLevelId(player.getLevelId()+1);
                 gameView.activity.hd.sendEmptyMessage(1);
             }

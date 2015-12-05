@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-<<<<<<< HEAD
-    package="com.ballworld.activity">
-=======
     package="com.ballworld.activity" >
 
->>>>>>> a218613a3ff89888c1fb7470ea6623fc6c7d949f
     <!-- 请求权限 -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- 震动器 -->
@@ -33,28 +29,18 @@
     <!-- 蓝牙分享所需的权限 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-<<<<<<< HEAD
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <!--<uses-permission android:name="android.permission.BROADCAST_STICKY "/>-->
-=======
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <!--<uses-feature android:glEsVersion="0x00020000" android:required="true" />-->
->>>>>>> a218613a3ff89888c1fb7470ea6623fc6c7d949f
 
     <!-- <uses-permission android:name="android.permission.BROADCAST_STICKY "/> -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-<<<<<<< HEAD
-        android:theme="@style/AppTheme">
-        <!--主activity-->
-=======
         android:theme="@style/AppTheme" >
 
         <!-- 主activity -->
->>>>>>> a218613a3ff89888c1fb7470ea6623fc6c7d949f
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -98,9 +84,6 @@
         <!-- 智能聊天 -->
         <activity
             android:name=".SmartChatActivity"
-<<<<<<< HEAD
-            android:label="@string/title_activity_samrt_chat"></activity>
-=======
             android:label="@string/title_activity_samrt_chat" >
         </activity>
 
@@ -112,7 +95,6 @@
             android:name=".GameHelpActivity"
             android:label="@string/title_activity_game_help" >
         </activity>
->>>>>>> a218613a3ff89888c1fb7470ea6623fc6c7d949f
     </application>
 
 </manifest>

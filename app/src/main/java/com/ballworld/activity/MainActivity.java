@@ -1,4 +1,4 @@
-﻿package com.ballworld.activity;
+package com.ballworld.activity;
 
 import android.app.Activity;
 import android.app.Service;
@@ -462,7 +462,7 @@ public class MainActivity extends Activity {
      */
     private void goToGameView() {
         if (currentView == WhichView.CASUAL_MODE_VIEW) {
-            gameView = new GameView(this, levelId, null);//模拟第0（1）关
+            gameView = new GameView(this, levelId, Player.NIL);//模拟第0（1）关
             currentView = WhichView.CASUAL_GAME_VIEW;//休闲模式
 //            recorder = new SrecGLSurfaceView(this) {
 //                @Override

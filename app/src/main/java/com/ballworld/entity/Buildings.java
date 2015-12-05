@@ -1,4 +1,4 @@
-﻿package com.ballworld.entity;
+package com.ballworld.entity;
 
 /**
  * Created by mac on 2015/11/26.
