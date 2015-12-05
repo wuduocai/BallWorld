@@ -9,9 +9,12 @@ import com.ballworld.entity.Buildings;
 import com.ballworld.entity.Player;
 
 import static com.ballworld.entity.Player.BUILDING_LEVEL;
+import static com.ballworld.entity.Player.DAMAGE;
+import static com.ballworld.entity.Player.DEFENSE;
 import static com.ballworld.entity.Player.FOOD;
 import static com.ballworld.entity.Player.HP;
 import static com.ballworld.entity.Player.LEVEL;
+import static com.ballworld.entity.Player.LEVEL_ID;
 import static com.ballworld.entity.Player.MINE;
 import static com.ballworld.entity.Player.WOOD;
 import static com.ballworld.util.MySQLiteHelper.TABLE_PLAYER;
@@ -40,11 +43,12 @@ public class SQLiteUtil {
 
         //开始操作
         try {
-            db.execSQL("INSERT INTO "+TABLE_PLAYER+" VALUES(null,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
+            db.execSQL("INSERT INTO "+TABLE_PLAYER+" VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
                     player.getFood(), player.getWood(), player.getMine(), player.getHp(), player.getLevel(),
                     player.getBuilding()[0].getLevel(), player.getBuilding()[1].getLevel(),
                     player.getBuilding()[2].getLevel(), player.getBuilding()[3].getLevel(),
                     player.getBuilding()[4].getLevel(), player.getBuilding()[5].getLevel(),
+                    player.getDamage(),player.getDefense(),player.getLevelId()
             });
 
             //成功完成事物
@@ -74,6 +78,9 @@ public class SQLiteUtil {
             cv.put(MINE, player.getMine());
             cv.put(HP, player.getHp());
             cv.put(LEVEL, player.getLevel());
+            cv.put(DAMAGE,player.getDamage());
+            cv.put(DEFENSE,player.getDefense());
+            cv.put(LEVEL_ID,player.getLevelId());
             for (int i=0;i<6;i++){
                 cv.put(BUILDING_LEVEL[i],player.getBuilding()[i].getLevel());
             }
@@ -96,15 +103,18 @@ public class SQLiteUtil {
         Player player = null;
         Buildings[] buildings = new Buildings[6];
         //query
-        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_PLAYER + "WHERE _id = ?", new String[]{id + ""});
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_PLAYER + " WHERE _id = ?", new String[]{id + ""});
         //有结果的话封装对象
-        if (c.moveToNext()) {
+        if (c!=null&&c.moveToNext()) {
             player = new Player();
             player.setFood(c.getInt(c.getColumnIndex(FOOD)));
             player.setWood(c.getInt(c.getColumnIndex(WOOD)));
             player.setMine(c.getInt(c.getColumnIndex(MINE)));
             player.setHp(c.getInt(c.getColumnIndex(HP)));
             player.setLevel(c.getInt(c.getColumnIndex(LEVEL)));
+            player.setDamage(c.getInt(c.getColumnIndex(DAMAGE)));
+            player.setDefense(c.getInt(c.getColumnIndex(DEFENSE)));
+            player.setLevelId(c.getInt(c.getColumnIndex(LEVEL_ID)));
             //获取建筑信息
             for (int i = 0; i < 6; i++) {
                 buildings[i] = new Buildings(i, c.getInt(c.getColumnIndex(BUILDING_LEVEL[i])));

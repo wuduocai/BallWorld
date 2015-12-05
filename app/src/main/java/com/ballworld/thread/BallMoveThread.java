@@ -214,7 +214,12 @@ public class BallMoveThread extends Thread {
             //声效
 
             //回到剧情界面
-            gameView.activity.hd.sendEmptyMessage(0);
+            if (player==null)
+                gameView.activity.hd.sendEmptyMessage(0);
+            else {
+                player.setLevelId(player.getLevelId()+1);
+                gameView.activity.hd.sendEmptyMessage(1);
+            }
         }
     }
 

@@ -5,9 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import static com.ballworld.entity.Player.BUILDING_LEVEL;
+import static com.ballworld.entity.Player.DAMAGE;
+import static com.ballworld.entity.Player.DEFENSE;
 import static com.ballworld.entity.Player.FOOD;
 import static com.ballworld.entity.Player.HP;
 import static com.ballworld.entity.Player.LEVEL;
+import static com.ballworld.entity.Player.LEVEL_ID;
 import static com.ballworld.entity.Player.MINE;
 import static com.ballworld.entity.Player.WOOD;
 
@@ -39,12 +42,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 + MINE + " INTEGER,"
                 + HP + " INTEGER,"
                 + LEVEL + " INTEGER,"
-                + BUILDING_LEVEL[0] + "INTEGER,"
-                + BUILDING_LEVEL[1] + "INTEGER,"
-                + BUILDING_LEVEL[2] + "INTEGER,"
-                + BUILDING_LEVEL[3] + "INTEGER,"
-                + BUILDING_LEVEL[4] + "INTEGER,"
-                + BUILDING_LEVEL[5] + "INTEGER)");
+                + BUILDING_LEVEL[0] + " INTEGER,"
+                + BUILDING_LEVEL[1] + " INTEGER,"
+                + BUILDING_LEVEL[2] + " INTEGER,"
+                + BUILDING_LEVEL[3] + " INTEGER,"
+                + BUILDING_LEVEL[4] + " INTEGER,"
+                + BUILDING_LEVEL[5] + " INTEGER,"
+                + DAMAGE + " INTEGER,"
+                + DEFENSE + " INTEGER,"
+                + LEVEL_ID + " INTEGER)");
     }
 
     /**
