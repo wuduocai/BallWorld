@@ -1,4 +1,4 @@
-package com.ballworld.thread;
+﻿package com.ballworld.thread;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +24,10 @@ public class ResourceThread extends Thread {
 
     public void run(){
         while(true){
-            player.setFood(player.getFood() + 2);
-            player.setWood(player.getWood() + 2);
-            player.setMine(player.getMine() + 1);
+            int[] res=player.produce();
+            player.setFood(player.getFood() + 2+res[0]);
+            player.setWood(player.getWood() + 2+res[1]);
+            player.setMine(player.getMine() + 1+res[2]);
             Bundle bundle=new Bundle();
             Message msg = new Message();//创建消息类
             bundle.putInt("food",player.getFood());

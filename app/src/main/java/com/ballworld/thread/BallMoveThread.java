@@ -1,5 +1,8 @@
 package com.ballworld.thread;
 
+import android.view.KeyEvent;
+
+import com.ballworld.entity.Player;
 import com.ballworld.view.GameView;
 
 import static com.ballworld.util.Constant.UNIT_SIZE;
@@ -16,9 +19,11 @@ public class BallMoveThread extends Thread {
     public float ballGX;
     public float ballGZ;//每次拷贝加速度
     GameView gameView;//引用gameView
+    Player player;//玩家
 
-    public BallMoveThread(GameView gameView) {
+    public BallMoveThread(GameView gameView, Player player) {
         this.gameView = gameView;
+        this.player = player;
     }
 
     @Override
@@ -182,6 +187,7 @@ public class BallMoveThread extends Thread {
         ballX = gameView.map[0].length * UNIT_SIZE / 2 + ballX;
         ballZ = gameView.map.length * UNIT_SIZE / 2 + ballZ;
         gameView.coverBlocks[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] = 0;
+        //zha dan
         if (gameView.mapBomb[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] == 1) {
             gameView.mapBomb[(int) (ballZ / UNIT_SIZE)][(int) (ballX / UNIT_SIZE)] = 2;
             gameView.ball.ballVX = gameView.ball.ballVZ = 0f;

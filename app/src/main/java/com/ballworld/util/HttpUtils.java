@@ -1,7 +1,7 @@
 package com.ballworld.util;
 
 import com.ballworld.entity.ChatMessage;
-import com.ballworld.entity.Result;
+import com.ballworld.entity.ChatRequestResult;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
@@ -32,9 +32,9 @@ public class HttpUtils {
         ChatMessage chatMessage = new ChatMessage();
         String jsonRes = doGet(msg);
         Gson gson = new Gson();
-        Result result = null;
+        ChatRequestResult result = null;
         try {
-            result = gson.fromJson(jsonRes, Result.class);
+            result = gson.fromJson(jsonRes, ChatRequestResult.class);
             chatMessage.setMsg(result.getText());
         } catch (Exception e) {
             chatMessage.setMsg("网络问题或服务器繁忙，请稍候再试");

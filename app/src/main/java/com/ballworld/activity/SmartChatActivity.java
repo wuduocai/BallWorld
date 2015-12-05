@@ -23,12 +23,20 @@ import com.ballworld.entity.ChatMessage;
 import com.ballworld.entity.ChatMessageAdapter;
 import com.ballworld.util.HttpUtils;
 import com.ballworld.util.Translate;
+import com.turing.androidsdk.constant.Constant;
+import com.turing.androidsdk.tts.TTSListener;
+import com.turing.androidsdk.tts.TTSManager;
+import com.turing.androidsdk.voice.VoiceRecognizeManager;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SmartChatActivity extends Activity {
+public class SmartChatActivity extends Activity implements TTSListener{
+
+    //语音
+    TTSManager ttsManager;
+    VoiceRecognizeManager voiceRecognizeManager;
 
     //是否用文言文
     CheckBox wyw;
@@ -64,8 +72,10 @@ public class SmartChatActivity extends Activity {
         setContentView(R.layout.activity_samrt_chat);
         //获取CheckBox实例
         wyw = (CheckBox) this.findViewById(R.id.if_wyw);
+        ttsManager = new TTSManager(this, this);
+        ttsManager.startTTS("你好，我是萌萌哒客服，有什么可以为您服务", Constant.XunFei);
         //初始化百度监听
-        //initBaiduListener();
+        initBaiduListener();
         //初始化控件
         initView();
         //初始化数据
@@ -90,14 +100,14 @@ public class SmartChatActivity extends Activity {
             mDialog = new BaiduASRDigitalDialog(this, params);
             //设置百度语音识别回调接口
             mDialogListener = new DialogRecognitionListener() {
-
                 @Override
                 public void onResults(Bundle mResults) {
                     ArrayList<String> rs = mResults != null ? mResults.getStringArrayList(RESULTS_RECOGNITION) : null;
                     if (rs != null && rs.size() > 0) {
-                        //InputBox.setText(rs.get(0));
-                        Toast.makeText(SmartChatActivity.this, rs.get(0),
-                                Toast.LENGTH_SHORT).show();
+//                        mInputMsg.setText(rs.get(0));
+//                        Toast.makeText(SmartChatActivity.this, rs.get(0),
+//                                Toast.LENGTH_SHORT).show();
+                        showAnswer(rs.get(0));
                     }
 
                 }
@@ -114,8 +124,8 @@ public class SmartChatActivity extends Activity {
         speak.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SmartChatActivity.this, "正在努力实现中",
-                        Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SmartChatActivity.this, "正在努力实现中",Toast.LENGTH_SHORT).show();
+                mDialog.show();
             }
         });
         mSendMsg.setOnClickListener(new OnClickListener() {
@@ -178,9 +188,8 @@ public class SmartChatActivity extends Activity {
                 Message m = Message.obtain();
                 m.obj = fromMessage;
                 mHandler.sendMessage(m);
+                ttsManager.startTTS(fromMessage.getMsg(),Constant.XunFei);
             }
-
-            ;
         }.start();
     }
 
@@ -196,9 +205,6 @@ public class SmartChatActivity extends Activity {
 
     @Override
     protected void onDestroy(){
-        if (mDialog != null) {
-            mDialog.dismiss();
-        }
         super.onDestroy();
     }
 
@@ -223,5 +229,35 @@ public class SmartChatActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSpeechStart() {
+
+    }
+
+    @Override
+    public void onSpeechProgressChanged() {
+
+    }
+
+    @Override
+    public void onSpeechPause() {
+
+    }
+
+    @Override
+    public void onSpeechFinish() {
+
+    }
+
+    @Override
+    public void onSpeechError(int i) {
+
+    }
+
+    @Override
+    public void onSpeechCancel() {
+
     }
 }

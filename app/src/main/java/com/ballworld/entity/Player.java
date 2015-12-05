@@ -1,9 +1,17 @@
-package com.ballworld.entity;
+﻿package com.ballworld.entity;
 
 /**
  * Created by duocai at 18:23 on 2015/11/14.
  */
 public class Player {
+    public static final String FOOD = "food";
+    public static final String WOOD = "wood";
+    public static final String MINE = "mine";
+    public static final String HP = "hp";
+    public static final String LEVEL = "level";
+    public static final String[] BUILDING_LEVEL = {"level0","level1","level2","level3","level4","level5"};
+
+
     //食物的数量
     private int food;
     //木材的数量
@@ -15,7 +23,7 @@ public class Player {
     //level
     private int level;
     //记录玩家的建筑
-    private Buildings[] building=new Buildings[6];
+    private Buildings[] building;
 
 
     public Player(){
@@ -26,8 +34,23 @@ public class Player {
         this.food=food;
         this.wood=wood;
         this.mine=mine;
+        this.building=new Buildings[6];
+        for(int i=0;i<this.building.length;i++){
+            building[i]=new Buildings(i,0);
+        }
     }
 
+
+    //所有房屋的资源的增长量
+    public int[] produce(){
+        int[] output=new int[3];
+        for(int i=0;i<3;i++){
+            for(int j=0;j<4;j++){
+                output[i]=output[i]+this.getBuilding()[j].produce()[i];
+            }
+        }
+        return output;
+    }
     //set与get方法
     public int getFood(){
         return this.food;
