@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ballworld.entity.Equitment;
 import com.ballworld.entity.Player;
 import com.ballworld.thread.GuideThread;
 import com.ballworld.thread.ResourceThread;
@@ -453,6 +455,10 @@ public class MainActivity extends Activity {
         ImageButton moderateMake=(ImageButton)findViewById(R.id.moderatemake);
         //shiny制造
         ImageButton expensiveMake=(ImageButton)findViewById(R.id.expensivemake);
+        //为按钮添加监听器
+        makeButtonClick(cheapMake,1);
+        makeButtonClick(moderateMake,2);
+        makeButtonClick(expensiveMake,3);
     }
 
     /**
@@ -693,7 +699,17 @@ public class MainActivity extends Activity {
                     case 1:
                         //判断资源是否足够
                         if(player.getMine()>=10){
-
+                            player.setMine(player.getMine() - 10);
+                            Equitment newequit=new Equitment(1);
+                            Log.v("name",newequit.getName());
+                            Log.v("attack",""+newequit.getAttack());
+                            Log.v("denfense",""+newequit.getDefense());
+                            if(newequit.isWeapon()){
+                                player.setWeapon(newequit);
+                            }
+                            else{
+                                player.setDefn(newequit);
+                            }
                         }
                         else{
                             Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
@@ -701,7 +717,17 @@ public class MainActivity extends Activity {
                         break;
                     case 2://判断资源是否足够
                         if(player.getMine()>=120){
-
+                            player.setMine(player.getMine()-120);
+                            Equitment newequit=new Equitment(2);
+                            Log.v("name",newequit.getName());
+                            Log.v("attack",""+newequit.getAttack());
+                            Log.v("denfense", "" + newequit.getDefense());
+                            if(newequit.isWeapon()){
+                                player.setWeapon(newequit);
+                            }
+                            else{
+                                player.setDefn(newequit);
+                            }
                         }
                         else{
                             Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
@@ -709,7 +735,17 @@ public class MainActivity extends Activity {
                         break;
                     case 3://判断资源是否足够
                         if(player.getMine()>=300){
-
+                            player.setMine(player.getMine()-300);
+                            Equitment newequit=new Equitment(3);
+                            Log.v("name",newequit.getName());
+                            Log.v("attack",""+newequit.getAttack());
+                            Log.v("denfense", "" + newequit.getDefense());
+                            if(newequit.isWeapon()){
+                                player.setWeapon(newequit);
+                            }
+                            else{
+                                player.setDefn(newequit);
+                            }
                         }
                         else{
                             Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();

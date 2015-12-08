@@ -36,7 +36,7 @@ public class ResourceThread extends Thread {
             msg.setData(bundle);
             handler.sendMessage(msg);//通过handler对象发送消息
             try {
-                Thread.sleep(2000);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

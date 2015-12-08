@@ -140,10 +140,10 @@ public class SQLiteUtil {
             //获取装备信息
             equitments[0]=new Equitment(c.getString(c.getColumnIndex(WEAPON_NAME)),
                                         c.getInt(c.getColumnIndex(WEAPON_ATTACK)),
-                                        c.getInt(c.getColumnIndex(WEAPON_DEFENSE)));
+                                        c.getInt(c.getColumnIndex(WEAPON_DEFENSE)),true);
             equitments[1]=new Equitment(c.getString(c.getColumnIndex(DEFENSE_NAME)),
                     c.getInt(c.getColumnIndex(DEFENSE_ATTACK)),
-                    c.getInt(c.getColumnIndex(DEFENSE_DEFENSE)));
+                    c.getInt(c.getColumnIndex(DEFENSE_DEFENSE)),false);
             player.setEquitments(equitments);
         }
         c.close();

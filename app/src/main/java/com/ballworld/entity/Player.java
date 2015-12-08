@@ -127,7 +127,8 @@ public class Player {
     }
 
     public int getDamage() {
-        return damage;
+        int output=this.damage+this.getWeaponAttack()+this.getDenAttack();
+        return output;
     }
 
     public void setDamage(int damage) {
@@ -135,7 +136,8 @@ public class Player {
     }
 
     public int getDefense() {
-        return defense;
+        int output=this.defense+this.getWeaponDefense()+this.getDenDenfense();
+        return output;
     }
 
     public void setDefense(int defense) {
@@ -158,8 +160,44 @@ public class Player {
         this.equitments=equitments;
     }
 
+    public void setWeapon(Equitment equit){
+        this.equitments[0]=equit;
+    }
+
+    public void setDefn(Equitment equit){
+        this.equitments[1]=equit;
+    }
+
     public int gethpMax(int level){
         return maxhp[level-1];
+    }
+
+    public int getWeaponAttack(){
+        if(equitments[0]==null){
+            return 0;
+        }
+        return equitments[0].getAttack();
+    }
+
+    public int getWeaponDefense(){
+        if(equitments[0]==null){
+            return 0;
+        }
+        return equitments[0].getDefense();
+    }
+
+    public int getDenAttack(){
+        if(equitments[1]==null){
+            return 0;
+        }
+        return equitments[1].getAttack();
+    }
+
+    public int getDenDenfense(){
+        if(equitments[1]==null){
+            return 0;
+        }
+        return equitments[1].getDefense();
     }
 
 }
