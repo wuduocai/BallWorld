@@ -1,4 +1,4 @@
-﻿package com.ballworld.view;
+package com.ballworld.view;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

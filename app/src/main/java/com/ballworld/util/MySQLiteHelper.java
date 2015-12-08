@@ -7,11 +7,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 import static com.ballworld.entity.Player.BUILDING_LEVEL;
 import static com.ballworld.entity.Player.DAMAGE;
 import static com.ballworld.entity.Player.DEFENSE;
+import static com.ballworld.entity.Player.DEFENSE_ATTACK;
+import static com.ballworld.entity.Player.DEFENSE_DEFENSE;
+import static com.ballworld.entity.Player.DEFENSE_NAME;
 import static com.ballworld.entity.Player.FOOD;
 import static com.ballworld.entity.Player.HP;
 import static com.ballworld.entity.Player.LEVEL;
 import static com.ballworld.entity.Player.LEVEL_ID;
 import static com.ballworld.entity.Player.MINE;
+import static com.ballworld.entity.Player.WEAPON_ATTACK;
+import static com.ballworld.entity.Player.WEAPON_DEFENSE;
+import static com.ballworld.entity.Player.WEAPON_NAME;
 import static com.ballworld.entity.Player.WOOD;
 
 /**
@@ -50,7 +56,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 + BUILDING_LEVEL[5] + " INTEGER,"
                 + DAMAGE + " INTEGER,"
                 + DEFENSE + " INTEGER,"
-                + LEVEL_ID + " INTEGER)");
+                + LEVEL_ID + " INTEGER,"
+                + WEAPON_NAME + "STRING,"
+                + WEAPON_ATTACK + "INTEGER,"
+                + WEAPON_DEFENSE + "INTEGER,"
+                + DEFENSE_NAME + "STRING,"
+                + DEFENSE_ATTACK + "INTEGER,"
+                + DEFENSE_DEFENSE + "INTEGER)");
     }
 
     /**

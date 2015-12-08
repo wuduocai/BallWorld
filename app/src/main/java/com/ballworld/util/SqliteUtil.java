@@ -6,16 +6,23 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.ballworld.entity.Buildings;
+import com.ballworld.entity.Equitment;
 import com.ballworld.entity.Player;
 
 import static com.ballworld.entity.Player.BUILDING_LEVEL;
 import static com.ballworld.entity.Player.DAMAGE;
 import static com.ballworld.entity.Player.DEFENSE;
+import static com.ballworld.entity.Player.DEFENSE_ATTACK;
+import static com.ballworld.entity.Player.DEFENSE_DEFENSE;
+import static com.ballworld.entity.Player.DEFENSE_NAME;
 import static com.ballworld.entity.Player.FOOD;
 import static com.ballworld.entity.Player.HP;
 import static com.ballworld.entity.Player.LEVEL;
 import static com.ballworld.entity.Player.LEVEL_ID;
 import static com.ballworld.entity.Player.MINE;
+import static com.ballworld.entity.Player.WEAPON_ATTACK;
+import static com.ballworld.entity.Player.WEAPON_DEFENSE;
+import static com.ballworld.entity.Player.WEAPON_NAME;
 import static com.ballworld.entity.Player.WOOD;
 import static com.ballworld.util.MySQLiteHelper.TABLE_PLAYER;
 
@@ -43,12 +50,15 @@ public class SQLiteUtil {
 
         //开始操作
         try {
-            db.execSQL("INSERT INTO "+TABLE_PLAYER+" VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
+            db.execSQL("INSERT INTO "+TABLE_PLAYER+" VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
                     player.getFood(), player.getWood(), player.getMine(), player.getHp(), player.getLevel(),
                     player.getBuilding()[0].getLevel(), player.getBuilding()[1].getLevel(),
                     player.getBuilding()[2].getLevel(), player.getBuilding()[3].getLevel(),
                     player.getBuilding()[4].getLevel(), player.getBuilding()[5].getLevel(),
-                    player.getDamage(),player.getDefense(),player.getLevelId()
+                    player.getDamage(),player.getDefense(),player.getLevelId(),player.getEquitments()[0].getName(),
+                    player.getEquitments()[0].getAttack(),player.getEquitments()[0].getDefense(),
+                    player.getEquitments()[1].getName(),player.getEquitments()[1].getAttack(),
+                    player.getEquitments()[1].getDefense()
             });
 
             //成功完成事物
@@ -84,6 +94,12 @@ public class SQLiteUtil {
             for (int i=0;i<6;i++){
                 cv.put(BUILDING_LEVEL[i],player.getBuilding()[i].getLevel());
             }
+            cv.put(WEAPON_NAME,player.getEquitments()[0].getName());
+            cv.put(WEAPON_ATTACK,player.getEquitments()[0].getAttack());
+            cv.put(WEAPON_DEFENSE,player.getEquitments()[0].getDefense());
+            cv.put(DEFENSE_NAME, player.getEquitments()[1].getName());
+            cv.put(DEFENSE_ATTACK, player.getEquitments()[1].getAttack());
+            cv.put(DEFENSE_DEFENSE, player.getEquitments()[1].getDefense());
             //更改
             db.update(TABLE_PLAYER, cv, "_id = ?", new String[]{id+""});
 
@@ -102,6 +118,7 @@ public class SQLiteUtil {
         db = helper.getReadableDatabase();
         Player player = null;
         Buildings[] buildings = new Buildings[6];
+        Equitment[] equitments=new Equitment[2];
         //query
         Cursor c = db.rawQuery("SELECT * FROM " + TABLE_PLAYER + " WHERE _id = ?", new String[]{id + ""});
         //有结果的话封装对象
@@ -120,6 +137,14 @@ public class SQLiteUtil {
                 buildings[i] = new Buildings(i, c.getInt(c.getColumnIndex(BUILDING_LEVEL[i])));
             }
             player.setBuilding(buildings);
+            //获取装备信息
+            equitments[0]=new Equitment(c.getString(c.getColumnIndex(WEAPON_NAME)),
+                                        c.getInt(c.getColumnIndex(WEAPON_ATTACK)),
+                                        c.getInt(c.getColumnIndex(WEAPON_DEFENSE)));
+            equitments[1]=new Equitment(c.getString(c.getColumnIndex(DEFENSE_NAME)),
+                    c.getInt(c.getColumnIndex(DEFENSE_ATTACK)),
+                    c.getInt(c.getColumnIndex(DEFENSE_DEFENSE)));
+            player.setEquitments(equitments);
         }
         c.close();
         db.close();
