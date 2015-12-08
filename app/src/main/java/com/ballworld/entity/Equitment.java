@@ -55,7 +55,7 @@ public class Equitment {
                 random=(int)(Math.random()*2);
                 if(random==0){
                     String name=names2[(int)(Math.random()*4)]+weapons2[(int)(Math.random()*4)];
-                    this.attack=(int)(Math.random()*15)+2;
+                    this.attack=(int)(Math.random()*11)+2;
                     this.defense=(int)(Math.random()*3);
                     this.name=name;
                     this.weapon=true;
@@ -63,7 +63,7 @@ public class Equitment {
                 else{
                     String name=names2[(int)(Math.random()*4)]+defenses2[(int)(Math.random()*4)];
                     this.attack=(int)(Math.random()*2);
-                    this.defense=(int)(Math.random()*9)+2;
+                    this.defense=(int)(Math.random()*8)+2;
                     this.name=name;
                     this.weapon=false;
                 }
@@ -76,13 +76,13 @@ public class Equitment {
                 if(random==0){
                     String name=names3[(int)(Math.random()*4)]+weapons3[(int)(Math.random()*4)];
                     this.attack=(int)(Math.random()*30)+1;
-                    this.defense=(int)(Math.random()*8)-3;
+                    this.defense=(int)(Math.random()*9)-4;
                     this.name=name;
                     this.weapon=true;
                 }
                 else{
                     String name=names3[(int)(Math.random()*4)]+defenses3[(int)(Math.random()*4)];
-                    this.attack=(int)(Math.random()*6)-2;
+                    this.attack=(int)(Math.random()*7)-4;
                     this.defense=(int)(Math.random()*17)+1;
                     this.name=name;
                     this.weapon=false;

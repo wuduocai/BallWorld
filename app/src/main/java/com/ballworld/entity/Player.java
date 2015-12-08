@@ -42,7 +42,7 @@ public class Player {
     //防御力
     private int defense;
     //hp上限
-    private int[] maxhp={1,1,1,2,2,2,3,3,4,5};
+    private int[] maxhp={5,10,10,15,15,20,30,30,30,35};
 
     public Player(){
 
