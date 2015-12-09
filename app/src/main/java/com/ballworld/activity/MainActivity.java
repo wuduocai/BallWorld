@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.ballworld.entity.Equitment;
 import com.ballworld.entity.Player;
+import com.ballworld.thread.EquitThread;
 import com.ballworld.thread.GuideThread;
 import com.ballworld.thread.ResourceThread;
 import com.ballworld.util.MyTTSListener;
@@ -81,6 +82,7 @@ public class MainActivity extends Activity {
     GameView gameView;
     //thread
     ResourceThread resource;
+    EquitThread equitThread;
     GuideThread guideThread;
     //声明player
     Player player;
@@ -464,6 +466,22 @@ public class MainActivity extends Activity {
         makeButtonClick(cheapMake, 1);
         makeButtonClick(moderateMake, 2);
         makeButtonClick(expensiveMake, 3);
+        //用于更新textview的handler
+        final TextView test2=(TextView)findViewById(R.id.test2);
+        if(equitThread==null){
+            equitThread=new EquitThread(player,null);
+        }
+        equitThread.setHandler(new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle = msg.getData();
+                test2.setText("" + bundle.getInt("mine"));
+            }
+        });
+        if (!equitThread.getFlag()) {
+            equitThread.start();
+            equitThread.setFlag(true);
+        }
     }
 
     /**
