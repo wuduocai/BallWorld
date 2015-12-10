@@ -57,12 +57,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 + DAMAGE + " INTEGER,"
                 + DEFENSE + " INTEGER,"
                 + LEVEL_ID + " INTEGER,"
-                + WEAPON_NAME + "STRING,"
-                + WEAPON_ATTACK + "INTEGER,"
-                + WEAPON_DEFENSE + "INTEGER,"
-                + DEFENSE_NAME + "STRING,"
-                + DEFENSE_ATTACK + "INTEGER,"
-                + DEFENSE_DEFENSE + "INTEGER)");
+                + WEAPON_NAME + " STRING,"
+                + WEAPON_ATTACK + " INTEGER,"
+                + WEAPON_DEFENSE + " INTEGER,"
+                + DEFENSE_NAME + " STRING,"
+                + DEFENSE_ATTACK + " INTEGER,"
+                + DEFENSE_DEFENSE + " INTEGER)");
     }
 
     /**
