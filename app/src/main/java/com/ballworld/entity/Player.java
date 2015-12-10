@@ -1,5 +1,6 @@
 package com.ballworld.entity;
 
+
 /**
  * Created by duocai at 18:23 on 2015/11/14.
  */
@@ -13,8 +14,14 @@ public class Player {
     public static final String[] BUILDING_LEVEL = {"level0","level1","level2","level3","level4","level5"};
     public static final String DAMAGE = "damage";
     public static final String DEFENSE = "defense";
-    public static final String LEVEL_ID = "levelId";//关卡
-
+    public static final String LEVEL_ID = "levelId";
+    public static final String WEAPON_NAME = "weaponname";
+    public static final String WEAPON_ATTACK = "weaponattack";
+    public static final String WEAPON_DEFENSE = "weapondefense";
+    public static final String DEFENSE_NAME = "defensename";
+    public static final String DEFENSE_ATTACK = "defenseattack";
+    public static final String DEFENSE_DEFENSE = "defensedefense";
+    //关卡
     private  int levelId;
     //食物的数量
     private int food;
@@ -28,10 +35,14 @@ public class Player {
     private int level;
     //记录玩家的建筑
     private Buildings[] building;
+    //记录玩家的装备,equitments[0]记录武器，equitments[1]记录防具
+    private Equitment[] equitments;
     //攻击力
     private int damage;
     //防御力
     private int defense;
+    //hp上限
+    private int[] maxhp={5,10,10,15,15,20,30,30,30,35};
 
     public Player(){
 
@@ -45,7 +56,11 @@ public class Player {
         for(int i=0;i<this.building.length;i++){
             building[i]=new Buildings(i,0);
         }
+        this.equitments=new Equitment[2];
     }
+
+
+
 
 
     //所有房屋的资源的增长量
@@ -112,7 +127,8 @@ public class Player {
     }
 
     public int getDamage() {
-        return damage;
+        int output=this.damage+this.getWeaponAttack()+this.getDenAttack();
+        return output;
     }
 
     public void setDamage(int damage) {
@@ -120,7 +136,8 @@ public class Player {
     }
 
     public int getDefense() {
-        return defense;
+        int output=this.defense+this.getWeaponDefense()+this.getDenDenfense();
+        return output;
     }
 
     public void setDefense(int defense) {
@@ -134,4 +151,53 @@ public class Player {
     public void setLevelId(int levelId) {
         this.levelId = levelId;
     }
+
+    public Equitment[] getEquitments() {
+        return this.equitments;
+    }
+
+    public void setEquitments(Equitment[] equitments){
+        this.equitments=equitments;
+    }
+
+    public void setWeapon(Equitment equit){
+        this.equitments[0]=equit;
+    }
+
+    public void setDefn(Equitment equit){
+        this.equitments[1]=equit;
+    }
+
+    public int gethpMax(int level){
+        return maxhp[level-1];
+    }
+
+    public int getWeaponAttack(){
+        if(equitments[0]==null){
+            return 0;
+        }
+        return equitments[0].getAttack();
+    }
+
+    public int getWeaponDefense(){
+        if(equitments[0]==null){
+            return 0;
+        }
+        return equitments[0].getDefense();
+    }
+
+    public int getDenAttack(){
+        if(equitments[1]==null){
+            return 0;
+        }
+        return equitments[1].getAttack();
+    }
+
+    public int getDenDenfense(){
+        if(equitments[1]==null){
+            return 0;
+        }
+        return equitments[1].getDefense();
+    }
+
 }

@@ -31,12 +31,27 @@
             android:id="@+id/make"
             android:src="@drawable/make"/>
 
-        <ImageView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:id="@+id/test"
-            android:src="@drawable/fabricateinfo"/>
+            android:paddingRight="15dp"
+            android:paddingBottom="30dp"
+            android:background="@drawable/test1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/test2"
+            android:text="400"
+            android:textSize="20dp"
+            android:textColor="#ab6c39"
+            android:gravity="center_vertical|right"
+            android:paddingRight="25dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/test2"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

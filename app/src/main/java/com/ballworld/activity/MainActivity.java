@@ -14,7 +14,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +36,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ballworld.entity.Equitment;
 import com.ballworld.entity.Player;
+import com.ballworld.thread.EquitThread;
 import com.ballworld.thread.GuideThread;
 import com.ballworld.thread.ResourceThread;
 import com.ballworld.util.MyTTSListener;
@@ -57,7 +65,7 @@ import static com.ballworld.view.GameView.ballGZ;
 enum WhichView {
     WELCOME_VIEW, MAIN_MENU, SETTING_VIEW,
     HELP_VIEW, CASUAL_GAME_VIEW, STORY_GAME_VIEW, CASUAL_MODE_VIEW, TOWN_VIEW,
-    GUIDE
+    GUIDE,BUILD_VIEW,EQUITMENT_VIEW,PLAYER_VIEW
 }
 
 /**
@@ -74,6 +82,7 @@ public class MainActivity extends Activity {
     GameView gameView;
     //thread
     ResourceThread resource;
+    EquitThread equitThread;
     GuideThread guideThread;
     //声明player
     Player player;
@@ -366,8 +375,8 @@ public class MainActivity extends Activity {
         woodstorage.setText("" + player.getWood());
         minestorage.setText("" + player.getMine());
 
-        //将未建造的建筑加上黑色的滤镜
-        showBlack(new ImageView[]{house, food, wood, mine, fabricate, hospital}, player);
+        //将未建造的建筑的透明度设为0
+        changeAlpha(new ImageView[]{house, food, wood, mine, fabricate, hospital}, player);
         //用于更新textview的handler
         resource.setHandler(new Handler() {
             @Override
@@ -420,6 +429,7 @@ public class MainActivity extends Activity {
      */
     private void goToBuildHouseView() {
         setContentView(R.layout.build_house);
+        currentView=WhichView.BUILD_VIEW;
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
         //房屋的建造按钮
@@ -450,9 +460,37 @@ public class MainActivity extends Activity {
      */
     private void goToMakeWeaponView() {
         setContentView(R.layout.make_weapon);
+        currentView=WhichView.EQUITMENT_VIEW;
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
         imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
+        //制造武器的按钮
+        //raw制造
+        ImageButton cheapMake=(ImageButton)findViewById(R.id.cheapmake);
+        //ordinary制造
+        ImageButton moderateMake=(ImageButton)findViewById(R.id.moderatemake);
+        //shiny制造
+        ImageButton expensiveMake=(ImageButton)findViewById(R.id.expensivemake);
+        //为按钮添加监听器
+        makeButtonClick(cheapMake, 1);
+        makeButtonClick(moderateMake, 2);
+        makeButtonClick(expensiveMake, 3);
+        //用于更新textview的handler
+        final TextView test2=(TextView)findViewById(R.id.test2);
+        if(equitThread==null){
+            equitThread=new EquitThread(player,null);
+        }
+        equitThread.setHandler(new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle = msg.getData();
+                test2.setText("" + bundle.getInt("mine"));
+            }
+        });
+        if (!equitThread.getFlag()) {
+            equitThread.start();
+            equitThread.setFlag(true);
+        }
     }
 
     /**
@@ -461,9 +499,15 @@ public class MainActivity extends Activity {
      */
     private void goToPlayerInformationView() {
         setContentView(R.layout.player_information);
+        currentView=WhichView.PLAYER_VIEW;
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
         imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
+        //获得武器与装备显示的文本框
+        TextView weapon=(TextView)findViewById(R.id.weaponinfo);
+        TextView defense=(TextView)findViewById(R.id.defeninfo);
+        //展示武器与防具的信息的方法
+        showequitinfo(weapon,defense);
     }
 
     /**
@@ -620,12 +664,12 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 未建造的房屋加上黑色的滤镜
+     * 改变房屋图片的透明度
      */
-    public void showBlack(final ImageView[] image, Player player) {
+    public void changeAlpha(final ImageView[] image, Player player) {
         for (int i = 0; i < image.length; i++) {
             if (player.getBuilding()[i].getLevel() == 0) {
-                image[i].setColorFilter(Color.BLACK);
+                image[i].setAlpha(0);
             }
         }
     }
@@ -663,6 +707,123 @@ public class MainActivity extends Activity {
                     meView.setText(me[curText]);
                 } else {//语音放完切换到目标页面
                     hd.sendEmptyMessage(destView);
+                }
+            }
+        });
+    }
+
+    //个人信息页面显示装备的详细信息
+    public void showequitinfo(final TextView weapon,final TextView defense){
+        weapon.setText(null);
+        SpannableString spanText = new SpannableString("正在装备的武器：");
+        spanText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spanText.length(),
+                Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        spanText.setSpan(new AbsoluteSizeSpan(20, true), 0, spanText.length(),
+                Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        weapon.append(spanText);
+        if(player.getEquitments()[0]==null){
+            addBlackText(weapon,"\t\t无");
+        }
+        else{
+            weapon.append("\n");
+            addBlackText(weapon,"\t\t武器名称："+player.getEquitments()[0].getName());
+            addBlackText(weapon,"\t\t武器攻击："+player.getEquitments()[0].getAttack());
+            addBlackText(weapon,"\t\t武器防御："+player.getEquitments()[0].getDefense());
+        }
+        defense.setText(null);
+        spanText = new SpannableString("正在装备的防具：");
+        spanText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spanText.length(),
+                Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        spanText.setSpan(new AbsoluteSizeSpan(20, true), 0, spanText.length(),
+                Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        defense.append(spanText);
+        if(player.getEquitments()[1]==null){
+            addBlackText(defense,"\t\t无");
+        }
+        else{
+            defense.append("\n");
+            addBlackText(defense,"\t\t防具名称："+player.getEquitments()[1].getName());
+            addBlackText(defense,"\t\t防具攻击："+player.getEquitments()[1].getAttack());
+            addBlackText(defense,"\t\t防具防御："+player.getEquitments()[1].getDefense());
+        }
+    }
+
+    //在textview中添加黑色文字的方法
+    public void addBlackText(TextView text,String show){
+        SpannableString spanText = new SpannableString(show);
+        spanText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spanText.length(),
+                Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        text.append("\n");
+        text.append(spanText);
+    }
+
+    /*
+    * 为建造装备页面的建造按钮添加监听器
+    * type为1，代表raw建造
+    * type为2，代表ordinary建造
+    * type为3，代表shiny建造
+    * */
+    public void makeButtonClick(final ImageButton button, final int type){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (type){
+                    case 1:
+                        //判断资源是否足够
+                        if(player.getMine()>=10){
+                            player.setMine(player.getMine() - 10);
+                            Equitment newequit=new Equitment(1);
+                            Log.v("name",newequit.getName());
+                            Log.v("attack",""+newequit.getAttack());
+                            Log.v("denfense",""+newequit.getDefense());
+                            if(newequit.isWeapon()){
+                                player.setWeapon(newequit);
+                            }
+                            else{
+                                player.setDefn(newequit);
+                            }
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case 2://判断资源是否足够
+                        if(player.getMine()>=120){
+                            player.setMine(player.getMine()-120);
+                            Equitment newequit=new Equitment(2);
+                            Log.v("name",newequit.getName());
+                            Log.v("attack",""+newequit.getAttack());
+                            Log.v("denfense", "" + newequit.getDefense());
+                            if(newequit.isWeapon()){
+                                player.setWeapon(newequit);
+                            }
+                            else{
+                                player.setDefn(newequit);
+                            }
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case 3://判断资源是否足够
+                        if(player.getMine()>=300){
+                            player.setMine(player.getMine()-300);
+                            Equitment newequit=new Equitment(3);
+                            Log.v("name",newequit.getName());
+                            Log.v("attack",""+newequit.getAttack());
+                            Log.v("denfense", "" + newequit.getDefense());
+                            if(newequit.isWeapon()){
+                                player.setWeapon(newequit);
+                            }
+                            else{
+                                player.setDefn(newequit);
+                            }
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    default:;
                 }
             }
         });

@@ -36,20 +36,28 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/weaponlist"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/weaponbac"
-                android:layout_marginBottom="15dp" />
-
-            <ImageView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/weaponinfo"
-                android:src="@drawable/weaponbac"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/weaponbac"
+                android:layout_marginBottom="15dp"
+                android:textColor="@color/smssdk_black"
+                android:text=" 此处是武器名称 \n 此处是武器伤害 \n 此处是武器防御 "
+                android:paddingTop="15dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defeninfo"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/weaponbac"
+                android:paddingTop="15dp"
+                android:paddingLeft="15dp"
+                android:textColor="@color/smssdk_black"
+                android:text=" 此处是防具名称 \n 此处是防具伤害 \n 此处是防具防御 "/>
         </LinearLayout>
 
     </LinearLayout>
