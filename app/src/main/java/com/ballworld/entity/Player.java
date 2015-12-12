@@ -45,6 +45,10 @@ public class Player {
     private int[] maxhp = {5, 10, 10, 15, 15, 20, 30, 30, 30, 35};
     //记录玩家自身无装备情况下的防御力
     private int[] ownDen = {0, 1, 2, 2, 3, 3, 3, 4, 4, 5};
+    //记录玩家现有的exp
+    private int exp;
+    //记录玩家升级所需要的exp
+    private int[] expneeded={10,30,70,120,200,300,500,800,1200};
 
     public Player() {
 
@@ -59,11 +63,11 @@ public class Player {
             building[i] = new Buildings(i, 0);
         }
         this.equitments = new Equitment[2];
-        for (int i = 0; i <equitments.length; i++ ) {
-            equitments[i] = new Equitment();
-        }
-            this.level = 1;
+        equitments[0]=new Equitment("新手木剑",1,0,true);
+        equitments[1]=new Equitment("新手装甲",0,1,false);
+        this.level = 1;
         this.hp = maxhp[0];
+        this.exp=0;
     }
 
 
@@ -96,6 +100,16 @@ public class Player {
         }
         this.setHp(this.getHp() - actualharm);
         return actualharm;
+    }
+
+    //调用的升级的方法
+    public void update(){
+        if(this.level==10){
+            return;
+        }
+        while(this.level!=10&&this.exp>=this.expneeded[this.level-1]){
+            this.setLevel(this.getLevel()+1);
+        }
     }
 
     //set与get方法
@@ -228,5 +242,11 @@ public class Player {
         }
         return equitments[1].getDefense();
     }
+
+    public int getExp() {
+        return this.exp;
+    }
+
+    
 
 }
