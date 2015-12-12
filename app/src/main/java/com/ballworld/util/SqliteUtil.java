@@ -15,6 +15,7 @@ import static com.ballworld.entity.Player.DEFENSE;
 import static com.ballworld.entity.Player.DEFENSE_ATTACK;
 import static com.ballworld.entity.Player.DEFENSE_DEFENSE;
 import static com.ballworld.entity.Player.DEFENSE_NAME;
+import static com.ballworld.entity.Player.EXP;
 import static com.ballworld.entity.Player.FOOD;
 import static com.ballworld.entity.Player.HP;
 import static com.ballworld.entity.Player.LEVEL;
@@ -50,7 +51,7 @@ public class SQLiteUtil {
 
         //开始操作
         try {
-            db.execSQL("INSERT INTO "+TABLE_PLAYER+" VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
+            db.execSQL("INSERT INTO "+TABLE_PLAYER+" VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
                     player.getFood(), player.getWood(), player.getMine(), player.getHp(), player.getLevel(),
                     player.getBuilding()[0].getLevel(), player.getBuilding()[1].getLevel(),
                     player.getBuilding()[2].getLevel(), player.getBuilding()[3].getLevel(),
@@ -58,7 +59,7 @@ public class SQLiteUtil {
                     player.getDamage(),player.getDefense(),player.getLevelId(),player.getEquitments()[0].getName(),
                     player.getEquitments()[0].getAttack(),player.getEquitments()[0].getDefense(),
                     player.getEquitments()[1].getName(),player.getEquitments()[1].getAttack(),
-                    player.getEquitments()[1].getDefense()
+                    player.getEquitments()[1].getDefense(),player.getExp()
             });
 
             //成功完成事物
@@ -100,6 +101,7 @@ public class SQLiteUtil {
             cv.put(DEFENSE_NAME, player.getEquitments()[1].getName());
             cv.put(DEFENSE_ATTACK, player.getEquitments()[1].getAttack());
             cv.put(DEFENSE_DEFENSE, player.getEquitments()[1].getDefense());
+            cv.put(EXP,player.getExp());
             //更改
             db.update(TABLE_PLAYER, cv, "_id = ?", new String[]{id+""});
 
@@ -145,6 +147,7 @@ public class SQLiteUtil {
                     c.getInt(c.getColumnIndex(DEFENSE_ATTACK)),
                     c.getInt(c.getColumnIndex(DEFENSE_DEFENSE)),false);
             player.setEquitments(equitments);
+            player.setExp(c.getInt(c.getColumnIndex(EXP)));
         }
         c.close();
         db.close();

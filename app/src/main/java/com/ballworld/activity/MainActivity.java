@@ -568,9 +568,17 @@ public class MainActivity extends Activity {
         TextView damageinfo=(TextView)findViewById(R.id.damageinfo);
         TextView defenseinfo=(TextView)findViewById(R.id.defenseinfo);
         //显示信息
-        hpinfo.setText("" + player.getHp() + "/" + player.gethpMax(player.getLevel()));
-        levelinfo.setText("" + player.getLevel());
-        damageinfo.setText("" + player.getDamage());
+        hpinfo.setText(""+player.getHp()+"/"+player.gethpMax(player.getLevel()));
+        levelinfo.setText(""+player.getLevel());
+        String exp="";
+        if(player.getLevel()!=10){
+            exp+=player.getExp()+"/"+player.getExpneeded()[player.getLevel()-1];
+        }
+        else{
+            exp+="已满级";
+        }
+        expinfo.setText(exp);
+        damageinfo.setText(""+player.getDamage());
         defenseinfo.setText("" + player.getDefense());
     }
 

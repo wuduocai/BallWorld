@@ -10,6 +10,7 @@ import static com.ballworld.entity.Player.DEFENSE;
 import static com.ballworld.entity.Player.DEFENSE_ATTACK;
 import static com.ballworld.entity.Player.DEFENSE_DEFENSE;
 import static com.ballworld.entity.Player.DEFENSE_NAME;
+import static com.ballworld.entity.Player.EXP;
 import static com.ballworld.entity.Player.FOOD;
 import static com.ballworld.entity.Player.HP;
 import static com.ballworld.entity.Player.LEVEL;
@@ -62,7 +63,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 + WEAPON_DEFENSE + " INTEGER,"
                 + DEFENSE_NAME + " STRING,"
                 + DEFENSE_ATTACK + " INTEGER,"
-                + DEFENSE_DEFENSE + " INTEGER)");
+                + DEFENSE_DEFENSE + " INTEGER,"
+                + EXP +" INTEGER)");
     }
 
     /**
