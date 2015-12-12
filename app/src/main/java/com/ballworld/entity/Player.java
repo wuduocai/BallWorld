@@ -11,7 +11,7 @@ public class Player {
     public static final String MINE = "mine";
     public static final String HP = "hp";
     public static final String LEVEL = "level";
-    public static final String[] BUILDING_LEVEL = {"level0","level1","level2","level3","level4","level5"};
+    public static final String[] BUILDING_LEVEL = {"level0", "level1", "level2", "level3", "level4", "level5"};
     public static final String DAMAGE = "damage";
     public static final String DEFENSE = "defense";
     public static final String LEVEL_ID = "levelId";
@@ -22,7 +22,7 @@ public class Player {
     public static final String DEFENSE_ATTACK = "defenseattack";
     public static final String DEFENSE_DEFENSE = "defensedefense";
     //关卡
-    private  int levelId;
+    private int levelId;
     //食物的数量
     private int food;
     //木材的数量
@@ -42,73 +42,69 @@ public class Player {
     //防御力
     private int defense;
     //hp上限
-    private int[] maxhp={5,10,10,15,15,20,30,30,30,35};
+    private int[] maxhp = {5, 10, 10, 15, 15, 20, 30, 30, 30, 35};
     //记录玩家自身无装备情况下的防御力
-    private int[] ownDen={0,1,2,2,3,3,3,4,4,5};
+    private int[] ownDen = {0, 1, 2, 2, 3, 3, 3, 4, 4, 5};
 
-    public Player(){
+    public Player() {
 
     }
 
-    public Player(int food,int wood,int mine){
-        this.food=food;
-        this.wood=wood;
-        this.mine=mine;
-        this.building=new Buildings[6];
-        for(int i=0;i<this.building.length;i++){
-            building[i]=new Buildings(i,0);
+    public Player(int food, int wood, int mine) {
+        this.food = food;
+        this.wood = wood;
+        this.mine = mine;
+        this.building = new Buildings[6];
+        for (int i = 0; i < this.building.length; i++) {
+            building[i] = new Buildings(i, 0);
         }
-        this.equitments=new Equitment[2];
-        this.level=1;
-        this.hp=maxhp[0];
+        this.equitments = new Equitment[2];
+        for (int i = 0; i <equitments.length; i++ ) {
+            equitments[i] = new Equitment();
+        }
+            this.level = 1;
+        this.hp = maxhp[0];
     }
-
-
-
 
 
     //所有房屋的资源的增长量
-    public int[] produce(){
-        int[] output=new int[3];
-        for(int i=0;i<3;i++){
-            for(int j=0;j<4;j++){
-                output[i]=output[i]+this.getBuilding()[j].produce()[i];
+    public int[] produce() {
+        int[] output = new int[3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                output[i] = output[i] + this.getBuilding()[j].produce()[i];
             }
         }
         return output;
     }
 
     //根据敌人，自己的防御力来进行扣血
-    public int harm(int levelId){
-        int harm=(int)((levelId+1)*6.5);
-        int actualharm=0;
-        int defense=this.getDefense();
-        if(0<defense&&defense<=4){
-            actualharm=Math.max(harm-(int)(defense*0.35),1);
+    public int harm(int levelId) {
+        int harm = (int) ((levelId + 1) * 6.5);
+        int actualharm = 0;
+        int defense = this.getDefense();
+        if (0 < defense && defense <= 4) {
+            actualharm = Math.max(harm - (int) (defense * 0.35), 1);
+        } else if (defense == 0) {
+            actualharm = (int) (harm * 1.5);
+        } else if (defense < 0) {
+            actualharm = (int) (harm * (1 + (-1) * defense));
+        } else if (defense <= 15) {
+            actualharm = Math.max(harm - (int) (defense * 0.65), 1);
+        } else {
+            actualharm = Math.max(Math.min(harm - (int) (defense * 0.65), harm - (defense * (defense / 17))), 1);
         }
-        else if(defense==0){
-            actualharm=(int)(harm*1.5);
-        }
-        else if(defense<0){
-            actualharm=(int)(harm*(1+(-1)*defense));
-        }
-        else if(defense<=15){
-            actualharm=Math.max(harm-(int)(defense*0.65),1);
-        }
-        else{
-            actualharm=Math.max(Math.min(harm-(int)(defense*0.65),harm-(defense*(defense/17))),1);
-        }
-        this.setHp(this.getHp()-actualharm);
+        this.setHp(this.getHp() - actualharm);
         return actualharm;
     }
 
     //set与get方法
-    public int getFood(){
+    public int getFood() {
         return this.food;
     }
 
-    public void setFood(int food){
-        this.food=food;
+    public void setFood(int food) {
+        this.food = food;
     }
 
     public int getHp() {
@@ -151,12 +147,12 @@ public class Player {
         this.building = building;
     }
 
-    public void setBuilding(Buildings[] building,Buildings renew){
-        building[renew.getType()]=renew;
+    public void setBuilding(Buildings[] building, Buildings renew) {
+        building[renew.getType()] = renew;
     }
 
     public int getDamage() {
-        int output=2+this.getWeaponAttack()+this.getDenAttack();
+        int output = 2 + this.getWeaponAttack() + this.getDenAttack();
         return output;
     }
 
@@ -165,7 +161,7 @@ public class Player {
     }
 
     public int getDefense() {
-        int output=this.getOwnDen(this.getLevel())+this.getWeaponDefense()+this.getDenDenfense();
+        int output = this.getOwnDen(this.getLevel()) + this.getWeaponDefense() + this.getDenDenfense();
         return output;
     }
 
@@ -185,49 +181,49 @@ public class Player {
         return this.equitments;
     }
 
-    public void setEquitments(Equitment[] equitments){
-        this.equitments=equitments;
+    public void setEquitments(Equitment[] equitments) {
+        this.equitments = equitments;
     }
 
-    public void setWeapon(Equitment equit){
-        this.equitments[0]=equit;
+    public void setWeapon(Equitment equit) {
+        this.equitments[0] = equit;
     }
 
-    public void setDefn(Equitment equit){
-        this.equitments[1]=equit;
+    public void setDefn(Equitment equit) {
+        this.equitments[1] = equit;
     }
 
-    public int gethpMax(int level){
-        return maxhp[level-1];
+    public int gethpMax(int level) {
+        return maxhp[level - 1];
     }
 
-    public int getOwnDen(int level){
-        return ownDen[level-1];
+    public int getOwnDen(int level) {
+        return ownDen[level - 1];
     }
 
-    public int getWeaponAttack(){
-        if(equitments[0]==null){
+    public int getWeaponAttack() {
+        if (equitments[0] == null) {
             return 0;
         }
         return equitments[0].getAttack();
     }
 
-    public int getWeaponDefense(){
-        if(equitments[0]==null){
+    public int getWeaponDefense() {
+        if (equitments[0] == null) {
             return 0;
         }
         return equitments[0].getDefense();
     }
 
-    public int getDenAttack(){
-        if(equitments[1]==null){
+    public int getDenAttack() {
+        if (equitments[1] == null) {
             return 0;
         }
         return equitments[1].getAttack();
     }
 
-    public int getDenDenfense(){
-        if(equitments[1]==null){
+    public int getDenDenfense() {
+        if (equitments[1] == null) {
             return 0;
         }
         return equitments[1].getDefense();
