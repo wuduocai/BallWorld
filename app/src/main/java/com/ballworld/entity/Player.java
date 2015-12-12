@@ -21,6 +21,7 @@ public class Player {
     public static final String DEFENSE_NAME = "defensename";
     public static final String DEFENSE_ATTACK = "defenseattack";
     public static final String DEFENSE_DEFENSE = "defensedefense";
+    public static final String EXP="exp";
     //关卡
     private int levelId;
     //食物的数量
@@ -108,7 +109,8 @@ public class Player {
             return;
         }
         while(this.level!=10&&this.exp>=this.expneeded[this.level-1]){
-            this.setLevel(this.getLevel()+1);
+            this.setExp(this.exp-this.expneeded[this.level-1]);
+            this.setLevel(this.getLevel() + 1);
         }
     }
 
@@ -247,6 +249,11 @@ public class Player {
         return this.exp;
     }
 
-    
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
 
+    public int[] getExpneeded() {
+        return this.expneeded;
+    }
 }
