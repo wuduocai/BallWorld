@@ -754,7 +754,7 @@ public class MainActivity extends Activity {
      */
     public void showGuide(final int destView, final String[] guide,final String[] me) {
         setContentView(R.layout.guidance);
-        //currentView = WhichView.GUIDE;//咱不崩用
+        currentView = WhichView.GUIDE;
 
         //初始化控件
         final TTSManager ttsManager = new TTSManager(this,new MyTTSListener());
