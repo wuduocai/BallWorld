@@ -159,6 +159,7 @@ public class GameView extends GLSurfaceView {
 
         //开启小球移动线程
         ballMoveThread = new BallMoveThread(this, player);
+        BallMoveThread.ballMoveFlag=true;
         ballMoveThread.start();
     }
 
