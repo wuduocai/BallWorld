@@ -413,23 +413,23 @@ public class MainActivity extends Activity {
         imageClick(person, R.drawable.head, R.drawable.head, 4);
         //对医院添加监听器
         if (player.getBuilding()[5].getLevel() != 0) {
-            imageClick(hospital, R.drawable.hospitalpressed, R.drawable.hospital, 0);
+            houseImageClick(hospital, R.drawable.hospitalpressed, R.drawable.hospital, 5);
         }
         //对住房添加监听器
         if (player.getBuilding()[0].getLevel() != 0) {
-            imageClick(house, R.drawable.housepressed, R.drawable.house, 0);
+            houseImageClick(house, R.drawable.housepressed, R.drawable.house, 0);
         }
         //对伐木场添加监听器
         if (player.getBuilding()[2].getLevel() != 0) {
-            imageClick(wood, R.drawable.woodpressed, R.drawable.wood, 0);
+            houseImageClick(wood, R.drawable.woodpressed, R.drawable.wood, 2);
         }
         //对农场添加监听器
         if (player.getBuilding()[1].getLevel() != 0) {
-            imageClick(food, R.drawable.foodpressed, R.drawable.food, 0);
+            houseImageClick(food, R.drawable.foodpressed, R.drawable.food, 1);
         }
         //对矿场添加监听器
         if (player.getBuilding()[3].getLevel() != 0) {
-            imageClick(mine, R.drawable.minepressed, R.drawable.mine, 0);
+            houseImageClick(mine, R.drawable.minepressed, R.drawable.mine, 3);
         }
         //对铁匠铺添加监听器，前往开发装备界面
         if (player.getBuilding()[4].getLevel() != 0) {
@@ -1047,12 +1047,60 @@ public class MainActivity extends Activity {
                 if (event.getAction() == event.ACTION_UP) {
                     image.setImageResource(pic2);
                     if (click){
+                        int[] food;
+                        int[] wood;
+                        int[] mine;
                         String output="该建筑的等级为"+player.getBuilding()[type].getLevel()+"\n";
                         switch(type){
                             case 0:
-
+                                food=new int[]{0,2,6,10};
+                                wood=new int[]{0,2,6,10};
+                                mine=new int[]{0,1,3,5};
+                                output+="每分钟增长资源：\n"
+                                        +"食物："+food[player.getBuilding()[type].getLevel()]+"\n"
+                                        +"木材："+wood[player.getBuilding()[type].getLevel()]+"\n"
+                                        +"铁料："+mine[player.getBuilding()[type].getLevel()]+"\n";
                                 break;
+                            case 1:
+                                food=new int[]{0,10,15,30};
+                                output+="每分钟增长资源：\n"
+                                        +"食物:"+food[player.getBuilding()[type].getLevel()]+"\n";
+                                break;
+                            case 2:
+                                wood=new int[]{0,12,20,30};
+                                output+="每分钟增长资源：\n"
+                                        +"木材:"+wood[player.getBuilding()[type].getLevel()]+"\n";
+                                break;
+                            case 3:
+                                mine=new int[]{0,5,10,20};
+                                output+="每分钟增长资源：\n"
+                                        +"铁料:"+mine[player.getBuilding()[type].getLevel()]+"\n";
+                                break;
+                            case 5:
+                                //医院根据建筑等级的不同，每滴血的花费
+                                int[] cost={0,5,3,2};
+                                output+="每治疗一点hp花费的食物："+cost[player.getBuilding()[type].getLevel()]+"\n";
+                                //判断是否有扣血
+                                if(player.getHp()==player.gethpMax(player.getLevel())){
+                                    output+="您当前十分健康，不需要治疗\n";
+                                }
+                                else{
+                                    int foodcost=cost[player.getBuilding()[type].getLevel()]*(player.gethpMax(player.getLevel())-player.getHp());
+                                    if(player.getFood()>=foodcost){
+                                        output+="您治疗了"+(player.gethpMax(player.getLevel())-player.getHp())+"点hp\n"
+                                        +"花费食物:"+foodcost+"\n";
+                                        player.setFood(player.getFood()-foodcost);
+                                        player.setHp(player.gethpMax(player.getLevel()));
+                                    }
+                                    else{
+                                        output+="完全治疗需要食物:"+foodcost+"\n"
+                                        +"您当前食物不足\n";
+                                    }
+                                }
+                                break;
+                            default:break;
                         }
+                        showToast(output);
                     }
                     click = true;
                 }
