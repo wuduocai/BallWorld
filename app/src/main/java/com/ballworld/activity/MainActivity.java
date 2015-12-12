@@ -39,9 +39,11 @@ import android.widget.Toast;
 import com.ballworld.entity.Buildings;
 import com.ballworld.entity.Equitment;
 import com.ballworld.entity.Player;
+import com.ballworld.thread.BallMoveThread;
 import com.ballworld.thread.BuildThread;
 import com.ballworld.thread.EquitThread;
 import com.ballworld.thread.GuideThread;
+import com.ballworld.thread.KeyBackThread;
 import com.ballworld.thread.ResourceThread;
 import com.ballworld.util.MyTTSListener;
 import com.ballworld.util.RotateUtil;
@@ -99,6 +101,9 @@ public class MainActivity extends Activity {
     TextView meView;
     ImageView skipButton;
     public int curText;
+    //监听返回键
+    public boolean keyBack=false;
+    public KeyBackThread keyBackThread;
     //数据库
     SQLiteUtil slu;
     //功能引用
@@ -206,11 +211,20 @@ public class MainActivity extends Activity {
         //其他变量
         mySensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);//获得SensorManager对象
         myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);//获得震动服务
+        initThread();
         initSound();
         initDataBase();
         initPlayer();
         //进入欢迎界面
         goToWelcomeView();
+    }
+
+    /**
+     * 初始化线程
+     */
+    private void initThread() {
+        keyBackThread = new KeyBackThread(this);//监听返回键线程
+        keyBackThread.start();
     }
 
     /**
@@ -554,9 +568,9 @@ public class MainActivity extends Activity {
         TextView damageinfo=(TextView)findViewById(R.id.damageinfo);
         TextView defenseinfo=(TextView)findViewById(R.id.defenseinfo);
         //显示信息
-        hpinfo.setText(""+player.getHp()+"/"+player.gethpMax(player.getLevel()));
-        levelinfo.setText(""+player.getLevel());
-        damageinfo.setText(""+player.getDamage());
+        hpinfo.setText("" + player.getHp() + "/" + player.gethpMax(player.getLevel()));
+        levelinfo.setText("" + player.getLevel());
+        damageinfo.setText("" + player.getDamage());
         defenseinfo.setText("" + player.getDefense());
     }
 
@@ -738,6 +752,7 @@ public class MainActivity extends Activity {
         final TTSManager ttsManager = new TTSManager(this,new MyTTSListener());
         final TextView guideView = (TextView)findViewById(R.id.guide);
         final TextView meView = (TextView)findViewById(R.id.me);
+        ImageView nextButton = (ImageView)findViewById(R.id.next);
         ImageView skipButton = (ImageView)findViewById(R.id.skip);
         curText=0;
 
@@ -747,7 +762,7 @@ public class MainActivity extends Activity {
         meView.setText(me[curText]);
 
         //更换动画
-        skipButton.setOnClickListener(new View.OnClickListener() {
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 curText++;
@@ -758,6 +773,13 @@ public class MainActivity extends Activity {
                 } else {//语音放完切换到目标页面
                     hd.sendEmptyMessage(destView);
                 }
+            }
+        });
+        //掠过动画
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hd.sendEmptyMessage(destView);
             }
         });
     }
@@ -965,7 +987,7 @@ public class MainActivity extends Activity {
             }
             image.setVisibility(View.GONE);
             text.setVisibility(View.VISIBLE);
-            text.setText((buildThreads[type].getActualtime() / 60) + ":" + (buildThreads[type].getActualtime()%60));
+            text.setText((buildThreads[type].getActualtime() / 60) + ":" + (buildThreads[type].getActualtime() % 60));
         }
     }
 
@@ -1046,59 +1068,58 @@ public class MainActivity extends Activity {
                 }
                 if (event.getAction() == event.ACTION_UP) {
                     image.setImageResource(pic2);
-                    if (click){
+                    if (click) {
                         int[] food;
                         int[] wood;
                         int[] mine;
-                        String output="该建筑的等级为"+player.getBuilding()[type].getLevel()+"\n";
-                        switch(type){
+                        String output = "该建筑的等级为" + player.getBuilding()[type].getLevel() + "\n";
+                        switch (type) {
                             case 0:
-                                food=new int[]{0,2,6,10};
-                                wood=new int[]{0,2,6,10};
-                                mine=new int[]{0,1,3,5};
-                                output+="每分钟增长资源：\n"
-                                        +"食物："+food[player.getBuilding()[type].getLevel()]+"\n"
-                                        +"木材："+wood[player.getBuilding()[type].getLevel()]+"\n"
-                                        +"铁料："+mine[player.getBuilding()[type].getLevel()]+"\n";
+                                food = new int[]{0, 2, 6, 10};
+                                wood = new int[]{0, 2, 6, 10};
+                                mine = new int[]{0, 1, 3, 5};
+                                output += "每分钟增长资源：\n"
+                                        + "食物：" + food[player.getBuilding()[type].getLevel()] + "\n"
+                                        + "木材：" + wood[player.getBuilding()[type].getLevel()] + "\n"
+                                        + "铁料：" + mine[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 1:
-                                food=new int[]{0,10,15,30};
-                                output+="每分钟增长资源：\n"
-                                        +"食物:"+food[player.getBuilding()[type].getLevel()]+"\n";
+                                food = new int[]{0, 10, 15, 30};
+                                output += "每分钟增长资源：\n"
+                                        + "食物:" + food[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 2:
-                                wood=new int[]{0,12,20,30};
-                                output+="每分钟增长资源：\n"
-                                        +"木材:"+wood[player.getBuilding()[type].getLevel()]+"\n";
+                                wood = new int[]{0, 12, 20, 30};
+                                output += "每分钟增长资源：\n"
+                                        + "木材:" + wood[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 3:
-                                mine=new int[]{0,5,10,20};
-                                output+="每分钟增长资源：\n"
-                                        +"铁料:"+mine[player.getBuilding()[type].getLevel()]+"\n";
+                                mine = new int[]{0, 5, 10, 20};
+                                output += "每分钟增长资源：\n"
+                                        + "铁料:" + mine[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 5:
                                 //医院根据建筑等级的不同，每滴血的花费
-                                int[] cost={0,5,3,2};
-                                output+="每治疗一点hp花费的食物："+cost[player.getBuilding()[type].getLevel()]+"\n";
+                                int[] cost = {0, 5, 3, 2};
+                                output += "每治疗一点hp花费的食物：" + cost[player.getBuilding()[type].getLevel()] + "\n";
                                 //判断是否有扣血
-                                if(player.getHp()==player.gethpMax(player.getLevel())){
-                                    output+="您当前十分健康，不需要治疗\n";
-                                }
-                                else{
-                                    int foodcost=cost[player.getBuilding()[type].getLevel()]*(player.gethpMax(player.getLevel())-player.getHp());
-                                    if(player.getFood()>=foodcost){
-                                        output+="您治疗了"+(player.gethpMax(player.getLevel())-player.getHp())+"点hp\n"
-                                        +"花费食物:"+foodcost+"\n";
-                                        player.setFood(player.getFood()-foodcost);
+                                if (player.getHp() == player.gethpMax(player.getLevel())) {
+                                    output += "您当前十分健康，不需要治疗\n";
+                                } else {
+                                    int foodcost = cost[player.getBuilding()[type].getLevel()] * (player.gethpMax(player.getLevel()) - player.getHp());
+                                    if (player.getFood() >= foodcost) {
+                                        output += "您治疗了" + (player.gethpMax(player.getLevel()) - player.getHp()) + "点hp\n"
+                                                + "花费食物:" + foodcost + "\n";
+                                        player.setFood(player.getFood() - foodcost);
                                         player.setHp(player.gethpMax(player.getLevel()));
-                                    }
-                                    else{
-                                        output+="完全治疗需要食物:"+foodcost+"\n"
-                                        +"您当前食物不足\n";
+                                    } else {
+                                        output += "完全治疗需要食物:" + foodcost + "\n"
+                                                + "您当前食物不足\n";
                                     }
                                 }
                                 break;
-                            default:break;
+                            default:
+                                break;
                         }
                         showToast(output);
                     }
@@ -1174,6 +1195,49 @@ public class MainActivity extends Activity {
                     currentView == WhichView.HELP_VIEW ||
                     currentView == WhichView.CASUAL_MODE_VIEW) {
                 hd.sendEmptyMessage(0);
+            }
+            else if (currentView == WhichView.CASUAL_GAME_VIEW) {//休闲游戏
+                if (keyBack) {
+                    BallMoveThread.ballMoveFlag=false;//小球线程停止
+                    hd.sendEmptyMessage(10);
+                    keyBack=false;
+                }
+                else {
+                    Toast.makeText(this,"再按一次回到画廊",Toast.LENGTH_SHORT).show();
+                    keyBack=true;
+                }
+            }
+            else if (currentView == WhichView.STORY_GAME_VIEW) {//故事游戏
+                if (keyBack) {
+                    BallMoveThread.ballMoveFlag=false;//小球线程停止
+                    hd.sendEmptyMessage(1);
+                    keyBack=false;
+                }
+                else {
+                    Toast.makeText(this,"再按一次回到城镇",Toast.LENGTH_SHORT).show();
+                    keyBack=true;
+                }
+            }
+            else if (currentView == WhichView.TOWN_VIEW) {
+                if (keyBack) {
+                    //停止游戏线程
+                    hd.sendEmptyMessage(0);
+                    keyBack=false;
+                }
+                else {
+                    Toast.makeText(this,"再按一次回到菜单",Toast.LENGTH_SHORT).show();
+                    keyBack=true;
+                }
+            }
+            else if (currentView == WhichView.MAIN_MENU) {
+                if (keyBack) {
+                    //停止游戏
+                    this.finish();
+                }
+                else {
+                    Toast.makeText(this,"再按一次退出游戏",Toast.LENGTH_SHORT).show();
+                    keyBack=true;
+                }
             }
         }
         else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
