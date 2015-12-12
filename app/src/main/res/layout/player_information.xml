@@ -21,14 +21,100 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical">
-
-        <ImageView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/psersoninfo"
-            android:src="@drawable/personinfo"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="15dp" />
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/infotitle"
+                android:background="@drawable/infotitle"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/levelinfo"
+                android:background="@drawable/levelinfo"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:text="400"
+                android:textSize="20dp"
+                android:textColor="#ab6c39"
+                android:gravity="center_vertical|right"
+                android:paddingRight="25dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/hpinfo"
+                android:background="@drawable/hpinfo"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:text="400"
+                android:textSize="20dp"
+                android:textColor="#ab6c39"
+                android:gravity="center_vertical|right"
+                android:paddingRight="25dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/damageinfo"
+                android:background="@drawable/damageinfo"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:text="400"
+                android:textSize="20dp"
+                android:textColor="#ab6c39"
+                android:gravity="center_vertical|right"
+                android:paddingRight="25dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/expinfo"
+                android:background="@drawable/expinfo"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:text="400"
+                android:textSize="20dp"
+                android:textColor="#ab6c39"
+                android:gravity="center_vertical|right"
+                android:paddingRight="25dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defenseinfo"
+                android:background="@drawable/defenseinfo"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:text="400"
+                android:textSize="20dp"
+                android:textColor="#ab6c39"
+                android:gravity="center_vertical|right"
+                android:paddingRight="25dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/infofoot"
+                android:background="@drawable/infofoot"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="15dp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"

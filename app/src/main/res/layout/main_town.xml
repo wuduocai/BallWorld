@@ -31,6 +31,20 @@
                 android:focusable="true"
                 android:longClickable="true" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/houseing"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/house"
+                android:gravity="center"
+                android:text="20:00"
+                android:textSize="40dp"
+                android:textColor="#fdd012"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,6 +56,20 @@
                 android:clickable="true"
                 android:longClickable="true" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fooding"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/food"
+                android:gravity="center"
+                android:text="20:00"
+                android:textSize="40dp"
+                android:textColor="#fdd012"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,16 +77,23 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:src="@drawable/hospital"
-                android:adjustViewBounds="false"
                 android:clickable="true"
-                android:foregroundTint="@color/abc_search_url_text_selected"
-                android:tintMode="screen"
-                android:visibility="visible"
                 android:longClickable="true"
-                android:foregroundTintMode="multiply"
-                android:focusableInTouchMode="false"
-                android:focusable="true"
-                android:contextClickable="false" />
+                android:focusable="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/hospitaling"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/hospital"
+                android:gravity="center"
+                android:text="20:00"
+                android:textSize="40dp"
+                android:textColor="#fdd012"
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
@@ -79,6 +114,20 @@
                 android:focusable="true"
                 android:longClickable="true" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/mineing"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/mine"
+                android:gravity="center"
+                android:text="20:00"
+                android:textSize="40dp"
+                android:textColor="#fdd012"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,6 +139,20 @@
                 android:focusable="true"
                 android:longClickable="true" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/wooding"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/wood"
+                android:gravity="center"
+                android:text="20:00"
+                android:textSize="40dp"
+                android:textColor="#fdd012"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,6 +163,20 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:longClickable="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fabricateing"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/fabricate"
+                android:gravity="center"
+                android:text="20:00"
+                android:textSize="40dp"
+                android:textColor="#fdd012"
+                android:textStyle="bold"
+                android:visibility="gone"/>
 
         </LinearLayout>
 

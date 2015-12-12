@@ -41,7 +41,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/house"
-                    android:src="@drawable/housepressed" />
+                    android:src="@drawable/housepressed"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
@@ -64,7 +66,9 @@
                     android:id="@+id/food"
                     android:src="@drawable/foodpressed"
                     android:layout_marginLeft="50dp"
-                    android:layout_marginRight="50dp" />
+                    android:layout_marginRight="50dp"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
@@ -84,7 +88,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/wood"
-                    android:src="@drawable/woodpressed" />
+                    android:src="@drawable/woodpressed"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
@@ -113,7 +119,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/mine"
-                    android:src="@drawable/minepressed" />
+                    android:src="@drawable/minepressed"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
@@ -135,7 +143,9 @@
                     android:id="@+id/fabricate"
                     android:src="@drawable/fabricatepressed"
                     android:layout_marginLeft="50dp"
-                    android:layout_marginRight="50dp" />
+                    android:layout_marginRight="50dp"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
@@ -155,7 +165,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/hospital"
-                    android:src="@drawable/hospitalpressed" />
+                    android:src="@drawable/hospitalpressed"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <ImageButton
                     android:layout_width="wrap_content"

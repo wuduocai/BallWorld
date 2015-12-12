@@ -11,6 +11,12 @@ public class Buildings {
     private int type;
     //房屋的等级，如果为0说明还没有建造
     private int level;
+    //房屋的建造时间
+    private int[] time={1,5,10};
+    //记录房屋实际剩余建造时间
+    private int actualTime;
+    //记录房屋是否在进行建造
+    private boolean underBuild;
 
     public Buildings(){
 
@@ -19,6 +25,8 @@ public class Buildings {
     public Buildings(int type,int level){
         this.type=type;
         this.level=level;
+        this.actualTime=time[0];
+        this.underBuild=false;
     }
     //为房屋升级,最多为3级
     public void addLevel(){
@@ -81,6 +89,9 @@ public class Buildings {
     //根据房屋的种类与等级，决定额外的资源增长的数量
     //共有4种建筑可以额外增加资源：房屋，农场，伐木场，矿场
     public int[] produce(){
+        if(this.isUnderBuild()){
+            return new int[]{0,0,0};
+        }
         int[] output=new int[3];
         int[] food=new int[4];
         int[] wood=new int[4];
@@ -133,6 +144,26 @@ public class Buildings {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public int buildingTime(){
+        return this.time[this.getLevel()-1];
+    }
+
+    public int getActualTime() {
+        return this.actualTime;
+    }
+
+    public void setActualTime(int time) {
+        this.actualTime = time;
+    }
+
+    public boolean isUnderBuild() {
+        return this.underBuild;
+    }
+
+    public void setUnderBuild(boolean underBuild) {
+        this.underBuild = underBuild;
     }
 }
 

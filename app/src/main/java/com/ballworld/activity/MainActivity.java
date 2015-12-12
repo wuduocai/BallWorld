@@ -36,8 +36,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ballworld.entity.Buildings;
 import com.ballworld.entity.Equitment;
 import com.ballworld.entity.Player;
+import com.ballworld.thread.BuildThread;
 import com.ballworld.thread.EquitThread;
 import com.ballworld.thread.GuideThread;
 import com.ballworld.thread.ResourceThread;
@@ -84,6 +86,9 @@ public class MainActivity extends Activity {
     ResourceThread resource;
     EquitThread equitThread;
     GuideThread guideThread;
+    BuildThread[] buildThreads;
+    //Toast
+    private Toast mToast;
     //声明player
     Player player;
     //指导页面变量
@@ -291,6 +296,12 @@ public class MainActivity extends Activity {
             player = new Player(0, 0, 0);
         if (resource == null)
             resource = new ResourceThread(player, null);
+        if(buildThreads==null){
+            buildThreads=new BuildThread[6];
+            for(int i=0;i<6;i++){
+                buildThreads[i]=new BuildThread(i,player,null);
+            }
+        }
 
         //get button
         ImageButton storyMode = (ImageButton) this.findViewById(R.id.storyModeButton),
@@ -360,6 +371,13 @@ public class MainActivity extends Activity {
         final TextView foodstorage = (TextView) findViewById(R.id.foodstorage);
         final TextView woodstorage = (TextView) findViewById(R.id.woodstorage);
         final TextView minestorage = (TextView) findViewById(R.id.minestorage);
+        //建造时的textview
+        final TextView houseing=(TextView)findViewById(R.id.houseing);
+        TextView hospitaling=(TextView)findViewById(R.id.hospitaling);
+        TextView fooding=(TextView)findViewById(R.id.fooding);
+        TextView wooding=(TextView)findViewById(R.id.wooding);
+        TextView fabricateing=(TextView)findViewById(R.id.fabricateing);
+        TextView mineing=(TextView)findViewById(R.id.mineing);
 
         //每次进入该界面时实时调整资源的数量
         foodstorage.setText("" + player.getFood());
@@ -412,7 +430,14 @@ public class MainActivity extends Activity {
         imageClick(arraw1, R.drawable.arraw1pressed, R.drawable.arraw1, 5);
         //对arraw2添加监听器，即build按钮，前往建造房屋界面
         imageClick(arraw2, R.drawable.arraw2pressed, R.drawable.arraw2, 2);
-        //add listener
+        //建造线程
+        buildThread(0,house,houseing);
+        buildThread(1,food,fooding);
+        buildThread(2,wood,wooding);
+        buildThread(3,mine,mineing);
+        buildThread(4,fabricate,fabricateing);
+        buildThread(5, hospital, hospitaling);
+
     }
 
     /**
@@ -444,6 +469,20 @@ public class MainActivity extends Activity {
         buildButtonClick(bulidHospital, 5);
         //为返回按钮添加监听器
         imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
+        //点击建筑的图片将会显示详情
+        ImageView house=(ImageView)findViewById(R.id.house);
+        ImageView wood=(ImageView)findViewById(R.id.wood);
+        ImageView food=(ImageView)findViewById(R.id.food);
+        ImageView fabricate=(ImageView)findViewById(R.id.fabricate);
+        ImageView mine=(ImageView)findViewById(R.id.mine);
+        ImageView hospital=(ImageView)findViewById(R.id.hospital);
+        //为其添加点击事件
+        showHouseInfo(0,house);
+        showHouseInfo(1,food);
+        showHouseInfo(2,wood);
+        showHouseInfo(3,mine);
+        showHouseInfo(4,fabricate);
+        showHouseInfo(5,hospital);
     }
 
     /**
@@ -499,6 +538,17 @@ public class MainActivity extends Activity {
         TextView defense=(TextView)findViewById(R.id.defeninfo);
         //展示武器与防具的信息的方法
         showequitinfo(weapon,defense);
+        //获得hp，等级，经验值，攻击力，防御力显示的文本框
+        TextView hpinfo=(TextView)findViewById(R.id.hpinfo);
+        TextView levelinfo=(TextView)findViewById(R.id.levelinfo);
+        TextView expinfo=(TextView)findViewById(R.id.expinfo);
+        TextView damageinfo=(TextView)findViewById(R.id.damageinfo);
+        TextView defenseinfo=(TextView)findViewById(R.id.defenseinfo);
+        //显示信息
+        hpinfo.setText(""+player.getHp()+"/"+player.gethpMax(player.getLevel()));
+        levelinfo.setText(""+player.getLevel());
+        damageinfo.setText(""+player.getDamage());
+        defenseinfo.setText("" + player.getDefense());
     }
 
     /**
@@ -758,6 +808,57 @@ public class MainActivity extends Activity {
     }
 
     /*
+    * 建筑页面显示建筑的详细信息
+    * */
+    public void showHouseInfo(final int type,final ImageView image){
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String output = "";
+                Buildings building = player.getBuilding()[type];
+                if (building.getLevel() == 0) {
+                    output += "该建筑尚未建造\n";
+                } else {
+                    output += "该建筑当前等级为" + building.getLevel() + "\n";
+                }
+                if (building.getLevel() == 3) {
+                    output += "该建筑已不可再升级\n";
+                } else {
+                    int[] res = player.getBuilding()[type].cost();
+                    output += "修建下一级建筑将花费\n"
+                            + "食物：" + res[0] + "\n"
+                            + "木材：" + res[1] + "\n"
+                            + "铁料：" + res[2] + "\n";
+                }
+                output += "效果：";
+                switch (type) {
+                    case 0:
+                        output += "会小幅增长所有资源的增长速度";
+                        break;
+                    case 1:
+                        output += "会大幅增长食物的增长速度";
+                        break;
+                    case 2:
+                        output += "会大幅增长木材的增长速度";
+                        break;
+                    case 3:
+                        output += "会大幅增长铁料的增长速度";
+                        break;
+                    case 4:
+                        output += "可以进行装备的制造";
+                        break;
+                    case 5:
+                        output += "可以治疗，回复hp";
+                        break;
+                    default:
+                        ;
+                }
+                showToast(output);
+            }
+        });
+    }
+
+    /*
     * 为建造装备页面的建造按钮添加监听器
     * type为1，代表raw建造
     * type为2，代表ordinary建造
@@ -767,66 +868,118 @@ public class MainActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (type){
+                switch (type) {
                     case 1:
                         //判断资源是否足够
-                        if(player.getMine()>=10){
+                        if (player.getMine() >= 10) {
                             player.setMine(player.getMine() - 10);
-                            Equitment newequit=new Equitment(1);
-                            Log.v("name",newequit.getName());
-                            Log.v("attack",""+newequit.getAttack());
-                            Log.v("denfense",""+newequit.getDefense());
-                            if(newequit.isWeapon()){
+                            Equitment newequit = new Equitment(1);
+                            showToast("获得：" + newequit.getName() + "\n"
+                                    + "攻击：" + newequit.getAttack() + "\n"
+                                    + "防御：" + newequit.getDefense());
+                            //Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
+                            Log.v("name", newequit.getName());
+                            Log.v("attack", "" + newequit.getAttack());
+                            Log.v("denfense", "" + newequit.getDefense());
+                            if (newequit.isWeapon()) {
                                 player.setWeapon(newequit);
-                            }
-                            else{
+                            } else {
                                 player.setDefn(newequit);
                             }
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
+                        } else {
+                            showToast("资源不足");
+                            //Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 2://判断资源是否足够
-                        if(player.getMine()>=120){
-                            player.setMine(player.getMine()-120);
-                            Equitment newequit=new Equitment(2);
-                            Log.v("name",newequit.getName());
-                            Log.v("attack",""+newequit.getAttack());
+                        if (player.getMine() >= 120) {
+                            player.setMine(player.getMine() - 120);
+                            Equitment newequit = new Equitment(2);
+                            showToast("获得：" + newequit.getName() + "\n"
+                                    + "攻击：" + newequit.getAttack() + "\n"
+                                    + "防御：" + newequit.getDefense());
+                            Log.v("name", newequit.getName());
+                            Log.v("attack", "" + newequit.getAttack());
                             Log.v("denfense", "" + newequit.getDefense());
-                            if(newequit.isWeapon()){
+                            if (newequit.isWeapon()) {
                                 player.setWeapon(newequit);
-                            }
-                            else{
+                            } else {
                                 player.setDefn(newequit);
                             }
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
+                        } else {
+                            showToast("资源不足");
+                            //Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 3://判断资源是否足够
-                        if(player.getMine()>=300){
-                            player.setMine(player.getMine()-300);
-                            Equitment newequit=new Equitment(3);
-                            Log.v("name",newequit.getName());
-                            Log.v("attack",""+newequit.getAttack());
+                        if (player.getMine() >= 300) {
+                            player.setMine(player.getMine() - 300);
+                            Equitment newequit = new Equitment(3);
+                            showToast("获得：" + newequit.getName() + "\n"
+                                    + "攻击：" + newequit.getAttack() + "\n"
+                                    + "防御：" + newequit.getDefense());
+                            Log.v("name", newequit.getName());
+                            Log.v("attack", "" + newequit.getAttack());
                             Log.v("denfense", "" + newequit.getDefense());
-                            if(newequit.isWeapon()){
+                            if (newequit.isWeapon()) {
                                 player.setWeapon(newequit);
-                            }
-                            else{
+                            } else {
                                 player.setDefn(newequit);
                             }
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
+                        } else {
+                            showToast("资源不足");
+                            //Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
                         }
                         break;
-                    default:;
+                    default:
+                        ;
                 }
             }
         });
+    }
+
+    /*
+    * 建造线程
+    * */
+    public void buildThread(final int type,final ImageView image,final TextView text){
+        buildThreads[type].setHandler(new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle = msg.getData();
+                text.setText(bundle.getInt("minute") + ":" + bundle.getInt("second"));
+                if (bundle.getInt("minute") == 0 && bundle.getInt("second") == 0) {
+                    image.setVisibility(View.VISIBLE);
+                    text.setVisibility(View.GONE);
+                    player.getBuilding()[type].setUnderBuild(false);
+                    buildThreads[type] = new BuildThread(type, player, null);
+                }
+            }
+        });
+        if(player.getBuilding()[type].isUnderBuild()){
+            if(!buildThreads[type].isStart()){
+                buildThreads[type].start();
+                buildThreads[type].setStart(true);
+            }
+            if(!buildThreads[type].isFlag()){
+                buildThreads[type].setFlag(true);
+            }
+            image.setVisibility(View.GONE);
+            text.setVisibility(View.VISIBLE);
+            text.setText((buildThreads[type].getActualtime() / 60) + ":" + (buildThreads[type].getActualtime()%60));
+        }
+    }
+
+    /*
+    * toast的显示
+    * */
+    public void showToast(String text) {
+        if(mToast == null) {
+            mToast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+        } else {
+            mToast.setText(text);
+            mToast.setDuration(Toast.LENGTH_SHORT);
+        }
+        mToast.show();
     }
 
     /*
@@ -837,25 +990,77 @@ public class MainActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //判断是否正在建造之中
+                if (player.getBuilding()[type].isUnderBuild()) {
+                    showToast("正在建造之中");
+                    //Toast.makeText(getApplicationContext(), "正在建造之中", Toast.LENGTH_SHORT).show();
+                }
                 //判断是否已经满级
-                if (player.getBuilding()[type].getLevel() != 3) {
+                else if (player.getBuilding()[type].getLevel() != 3) {
                     //若未满级，判断资源是否足够
                     int[] res = player.getBuilding()[type].cost();
                     if (player.getFood() >= res[0] && player.getWood() >= res[1] && player.getMine() >= res[2]) {
+                        player.getBuilding()[type].setUnderBuild(true);
                         player.getBuilding()[type].addLevel();
                         player.setFood(player.getFood() - res[0]);
                         player.setWood(player.getWood() - res[1]);
                         player.setMine(player.getMine() - res[2]);
-                        Toast.makeText(getApplicationContext(), "建造成功", Toast.LENGTH_SHORT).show();
+                        showToast("开始建造");
+                        //Toast.makeText(getApplicationContext(), "建造成功", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
+                        showToast("资源不足");
+                        //Toast.makeText(getApplicationContext(), "资源不足", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "该建筑已经满级", Toast.LENGTH_SHORT).show();
+                    showToast("该建筑已经满级");
+                    //Toast.makeText(getApplicationContext(), "该建筑已经满级", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
+
+    /*
+    * 主页面的建筑被点击之后的反应
+    * */
+    public void houseImageClick(final ImageView image, final int pic1, final int pic2, final int type){
+        image.setOnTouchListener(new OnTouchListener() {
+            boolean click = true;
+            float previousX = 0;
+            float previousY = 0;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float x = event.getX();
+                float y = event.getY();
+                if (event.getAction() == event.ACTION_DOWN) {
+                    image.setImageResource(pic1);
+                }
+                if (event.getAction() == event.ACTION_MOVE) {
+                    float dx = x - previousX;
+                    float dy = y - previousY;
+                    if ((dx > 2 || dy > 2) && previousX != 0 && previousY != 0)
+                        click = false;
+                    previousX = x;
+                    previousY = y;
+                }
+                if (event.getAction() == event.ACTION_UP) {
+                    image.setImageResource(pic2);
+                    if (click){
+                        String output="该建筑的等级为"+player.getBuilding()[type].getLevel()+"\n";
+                        switch(type){
+                            case 0:
+
+                                break;
+                        }
+                    }
+                    click = true;
+                }
+                return true;
+            }
+        });
+    }
+
 
     /*
     * 使imageview被点击时模拟出button的效果

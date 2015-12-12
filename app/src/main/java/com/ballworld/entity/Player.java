@@ -43,6 +43,8 @@ public class Player {
     private int defense;
     //hp上限
     private int[] maxhp={5,10,10,15,15,20,30,30,30,35};
+    //记录玩家自身无装备情况下的防御力
+    private int[] ownDen={0,1,2,2,3,3,3,4,4,5};
 
     public Player(){
 
@@ -57,6 +59,8 @@ public class Player {
             building[i]=new Buildings(i,0);
         }
         this.equitments=new Equitment[2];
+        this.level=1;
+        this.hp=maxhp[0];
     }
 
 
@@ -73,6 +77,31 @@ public class Player {
         }
         return output;
     }
+
+    //根据敌人，自己的防御力来进行扣血
+    public int harm(int levelId){
+        int harm=(int)((levelId+1)*6.5);
+        int actualharm=0;
+        int defense=this.getDefense();
+        if(0<defense&&defense<=4){
+            actualharm=Math.max(harm-(int)(defense*0.35),1);
+        }
+        else if(defense==0){
+            actualharm=(int)(harm*1.5);
+        }
+        else if(defense<0){
+            actualharm=(int)(harm*(1+(-1)*defense));
+        }
+        else if(defense<=15){
+            actualharm=Math.max(harm-(int)(defense*0.65),1);
+        }
+        else{
+            actualharm=Math.max(Math.min(harm-(int)(defense*0.65),harm-(defense*(defense/17))),1);
+        }
+        this.setHp(this.getHp()-actualharm);
+        return actualharm;
+    }
+
     //set与get方法
     public int getFood(){
         return this.food;
@@ -127,7 +156,7 @@ public class Player {
     }
 
     public int getDamage() {
-        int output=this.damage+this.getWeaponAttack()+this.getDenAttack();
+        int output=2+this.getWeaponAttack()+this.getDenAttack();
         return output;
     }
 
@@ -136,7 +165,7 @@ public class Player {
     }
 
     public int getDefense() {
-        int output=this.defense+this.getWeaponDefense()+this.getDenDenfense();
+        int output=this.getOwnDen(this.getLevel())+this.getWeaponDefense()+this.getDenDenfense();
         return output;
     }
 
@@ -170,6 +199,10 @@ public class Player {
 
     public int gethpMax(int level){
         return maxhp[level-1];
+    }
+
+    public int getOwnDen(int level){
+        return ownDen[level-1];
     }
 
     public int getWeaponAttack(){
