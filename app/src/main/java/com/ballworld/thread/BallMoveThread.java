@@ -219,21 +219,21 @@ public class BallMoveThread extends Thread {
                 gameView.activity.gameHandler.sendMessage(m);
                 gameView.activity.hd.sendEmptyMessage(0);
             } else {
-                player.setHp(player.getHp() - (MAX_DAMAGE-player.getDefense()));
+                int damage = player.harm(player.getLevelId());
                 if (player.getHp() <= 0) {
                     this.flag = false;//停止线程
                     player.setHp(1);//暂时模拟死亡效果
                     ttsManager.startTTS("Sorry,you died", Constant.XunFei);
                     //文字提醒
                     Message m = Message.obtain();
-                    m.obj = "你被炸死了";
+                    m.obj = "你损失了"+(damage)+"滴血,你被炸死了";
                     gameView.activity.gameHandler.sendMessage(m);
                     gameView.activity.hd.sendEmptyMessage(1);
                 } else {
                     ttsManager.startTTS("要小心", Constant.XunFei);
                     //文字提醒
                     Message m = Message.obtain();
-                    m.obj = "你损失了"+(MAX_DAMAGE-player.getDefense())+"滴血";
+                    m.obj = "你损失了"+(damage)+"滴血";
                     gameView.activity.gameHandler.sendMessage(m);
                 }
             }
