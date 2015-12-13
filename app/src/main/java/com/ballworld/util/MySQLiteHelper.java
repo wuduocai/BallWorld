@@ -16,6 +16,8 @@ import static com.ballworld.entity.Player.HP;
 import static com.ballworld.entity.Player.LEVEL;
 import static com.ballworld.entity.Player.LEVEL_ID;
 import static com.ballworld.entity.Player.MINE;
+import static com.ballworld.entity.Player.RESTTIME;
+import static com.ballworld.entity.Player.UNDERBUILD;
 import static com.ballworld.entity.Player.WEAPON_ATTACK;
 import static com.ballworld.entity.Player.WEAPON_DEFENSE;
 import static com.ballworld.entity.Player.WEAPON_NAME;
@@ -64,7 +66,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 + DEFENSE_NAME + " STRING,"
                 + DEFENSE_ATTACK + " INTEGER,"
                 + DEFENSE_DEFENSE + " INTEGER,"
-                + EXP +" INTEGER)");
+                + EXP + " INTEGER,"
+                + UNDERBUILD[0] + " INTEGER,"
+                + UNDERBUILD[1] + " INTEGER,"
+                + UNDERBUILD[2] + " INTEGER,"
+                + UNDERBUILD[3] + " INTEGER,"
+                + UNDERBUILD[4] + " INTEGER,"
+                + UNDERBUILD[5] + " INTEGER,"
+                + RESTTIME[0] + " INTEGER,"
+                + RESTTIME[1] + " INTEGER,"
+                + RESTTIME[2] + " INTEGER,"
+                + RESTTIME[3] + " INTEGER,"
+                + RESTTIME[4] + " INTEGER,"
+                + RESTTIME[5] + " INTEGER)");
     }
 
     /**

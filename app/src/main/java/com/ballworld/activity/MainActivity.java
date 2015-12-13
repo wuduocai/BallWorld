@@ -973,7 +973,7 @@ public class MainActivity extends Activity {
             }
             image.setVisibility(View.GONE);
             text.setVisibility(View.VISIBLE);
-            text.setText((buildThreads[type].getActualtime() / 60) + ":" + (buildThreads[type].getActualtime()%60));
+            text.setText((player.getBuilding()[type].getActualTime()/60) + ":" + (player.getBuilding()[type].getActualTime()%60));
         }
     }
 
@@ -1010,6 +1010,7 @@ public class MainActivity extends Activity {
                     if (player.getFood() >= res[0] && player.getWood() >= res[1] && player.getMine() >= res[2]) {
                         player.getBuilding()[type].setUnderBuild(true);
                         player.getBuilding()[type].addLevel();
+                        player.getBuilding()[type].setActualTime(player.getBuilding()[type].buildingTime());
                         player.setFood(player.getFood() - res[0]);
                         player.setWood(player.getWood() - res[1]);
                         player.setMine(player.getMine() - res[2]);

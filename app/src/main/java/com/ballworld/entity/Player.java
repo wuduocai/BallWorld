@@ -22,6 +22,8 @@ public class Player {
     public static final String DEFENSE_ATTACK = "defenseattack";
     public static final String DEFENSE_DEFENSE = "defensedefense";
     public static final String EXP="exp";
+    public static final String[] UNDERBUILD={"build0","build1","build2","build3","build4","build5"};
+    public static final String[] RESTTIME={"time0","time1","time2","time3","time4","time5"};
     //关卡
     private int levelId;
     //食物的数量

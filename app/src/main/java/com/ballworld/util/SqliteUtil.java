@@ -21,6 +21,8 @@ import static com.ballworld.entity.Player.HP;
 import static com.ballworld.entity.Player.LEVEL;
 import static com.ballworld.entity.Player.LEVEL_ID;
 import static com.ballworld.entity.Player.MINE;
+import static com.ballworld.entity.Player.RESTTIME;
+import static com.ballworld.entity.Player.UNDERBUILD;
 import static com.ballworld.entity.Player.WEAPON_ATTACK;
 import static com.ballworld.entity.Player.WEAPON_DEFENSE;
 import static com.ballworld.entity.Player.WEAPON_NAME;
@@ -51,7 +53,7 @@ public class SQLiteUtil {
 
         //开始操作
         try {
-            db.execSQL("INSERT INTO "+TABLE_PLAYER+" VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
+            db.execSQL("INSERT INTO "+TABLE_PLAYER+" VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new Object[]{
                     player.getFood(), player.getWood(), player.getMine(), player.getHp(), player.getLevel(),
                     player.getBuilding()[0].getLevel(), player.getBuilding()[1].getLevel(),
                     player.getBuilding()[2].getLevel(), player.getBuilding()[3].getLevel(),
@@ -59,7 +61,13 @@ public class SQLiteUtil {
                     player.getDamage(),player.getDefense(),player.getLevelId(),player.getEquitments()[0].getName(),
                     player.getEquitments()[0].getAttack(),player.getEquitments()[0].getDefense(),
                     player.getEquitments()[1].getName(),player.getEquitments()[1].getAttack(),
-                    player.getEquitments()[1].getDefense(),player.getExp()
+                    player.getEquitments()[1].getDefense(),player.getExp(),player.getBuilding()[0].isUnderBuild(),
+                    player.getBuilding()[1].isUnderBuild(),player.getBuilding()[2].isUnderBuild(),
+                    player.getBuilding()[3].isUnderBuild(),player.getBuilding()[4].isUnderBuild(),
+                    player.getBuilding()[5].isUnderBuild(),player.getBuilding()[0].getActualTime(),
+                    player.getBuilding()[1].getActualTime(),player.getBuilding()[2].getActualTime(),
+                    player.getBuilding()[3].getActualTime(),player.getBuilding()[4].getActualTime(),
+                    player.getBuilding()[5].getActualTime()
             });
 
             //成功完成事物
@@ -102,8 +110,19 @@ public class SQLiteUtil {
             cv.put(DEFENSE_ATTACK, player.getEquitments()[1].getAttack());
             cv.put(DEFENSE_DEFENSE, player.getEquitments()[1].getDefense());
             cv.put(EXP,player.getExp());
+            for (int i=0;i<6;i++){
+                if(player.getBuilding()[i].isUnderBuild()){
+                    cv.put(UNDERBUILD[i],1);
+                }
+                else{
+                    cv.put(UNDERBUILD[i],0);
+                }
+            }
+            for (int i=0;i<6;i++){
+                cv.put(RESTTIME[i],player.getBuilding()[i].getActualTime());
+            }
             //更改
-            db.update(TABLE_PLAYER, cv, "_id = ?", new String[]{id+""});
+            db.update(TABLE_PLAYER, cv, "_id = ?", new String[]{id + ""});
 
             //关闭连接
             db.close();
@@ -148,6 +167,17 @@ public class SQLiteUtil {
                     c.getInt(c.getColumnIndex(DEFENSE_DEFENSE)),false);
             player.setEquitments(equitments);
             player.setExp(c.getInt(c.getColumnIndex(EXP)));
+            for(int i=0;i<6;i++){
+                if(c.getInt(c.getColumnIndex(UNDERBUILD[i]))==1){
+                    player.getBuilding()[i].setUnderBuild(true);
+                }
+                else{
+                    player.getBuilding()[i].setUnderBuild(false);
+                }
+            }
+            for(int i=0;i<6;i++){
+                player.getBuilding()[i].setActualTime(c.getInt(c.getColumnIndex(RESTTIME[i])));
+            }
         }
         c.close();
         db.close();

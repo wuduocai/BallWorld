@@ -12,7 +12,7 @@ public class Buildings {
     //房屋的等级，如果为0说明还没有建造
     private int level;
     //房屋的建造时间
-    private int[] time={1,5,10};
+    private int[] time={60,300,600};
     //记录房屋实际剩余建造时间
     private int actualTime;
     //记录房屋是否在进行建造
@@ -147,6 +147,7 @@ public class Buildings {
     }
 
     public int buildingTime(){
+
         return this.time[this.getLevel()-1];
     }
 

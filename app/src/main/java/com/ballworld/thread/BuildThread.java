@@ -31,10 +31,10 @@ public class BuildThread extends Thread {
     public void run(){
         this.flag=true;
         Buildings building=player.getBuilding()[type];
-        actualtime=building.buildingTime();
-        actualtime=actualtime*60;
+        actualtime=building.getActualTime();
         while(player.getBuilding()[type].isUnderBuild()&&actualtime>0){
             actualtime--;
+            building.setActualTime(actualtime);
             Bundle bundle=new Bundle();
             Message msg = new Message();//创建消息类
             bundle.putInt("minute",actualtime/60);
