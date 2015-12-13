@@ -1,4 +1,4 @@
-package com.ballworld.activity;
+﻿package com.ballworld.activity;
 
 import android.app.Activity;
 import android.app.Service;
@@ -17,7 +17,6 @@ import android.os.Vibrator;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,7 +28,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,9 +37,11 @@ import android.widget.Toast;
 import com.ballworld.entity.Buildings;
 import com.ballworld.entity.Equitment;
 import com.ballworld.entity.Player;
+import com.ballworld.thread.BallMoveThread;
 import com.ballworld.thread.BuildThread;
 import com.ballworld.thread.EquitThread;
 import com.ballworld.thread.GuideThread;
+import com.ballworld.thread.KeyBackThread;
 import com.ballworld.thread.ResourceThread;
 import com.ballworld.util.MyTTSListener;
 import com.ballworld.util.RotateUtil;
@@ -67,7 +67,7 @@ import static com.ballworld.view.GameView.ballGZ;
 enum WhichView {
     WELCOME_VIEW, MAIN_MENU, SETTING_VIEW,
     HELP_VIEW, CASUAL_GAME_VIEW, STORY_GAME_VIEW, CASUAL_MODE_VIEW, TOWN_VIEW,
-    GUIDE,BUILD_VIEW,EQUITMENT_VIEW,PLAYER_VIEW
+    GUIDE, BUILD_VIEW, EQUITMENT_VIEW, PLAYER_VIEW
 }
 
 /**
@@ -79,6 +79,19 @@ public class MainActivity extends Activity {
     //关数
     public int levelId = 0;
     public GLRecorder recorder;//录屏工具
+    //指导页面变量
+    public String[] guide;//指导框对话
+    public int curText;
+    //监听返回键
+    public boolean keyBack = false;
+    public KeyBackThread keyBackThread;
+    //处理游戏过程中，提示信息
+    public Handler gameHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Toast.makeText(MainActivity.this, (String) msg.obj, Toast.LENGTH_SHORT).show();
+        }
+    };
     //view
     WelcomeView welcomeView;
     GameView gameView;
@@ -87,18 +100,13 @@ public class MainActivity extends Activity {
     EquitThread equitThread;
     GuideThread guideThread;
     BuildThread[] buildThreads;
-    //Toast
-    private Toast mToast;
     //声明player
     Player player;
-    //指导页面变量
-    public String[] guide;//指导框对话
     String[] me;
     TTSManager ttsManager;
     TextView guideView;
     TextView meView;
     ImageView skipButton;
-    public int curText;
     //数据库
     SQLiteUtil slu;
     //功能引用
@@ -108,6 +116,10 @@ public class MainActivity extends Activity {
     HashMap<Integer, Integer> soundPoolMap; //记录声音池返回的资源id
     boolean backgroundSoundFlag = true;//是否播放背景音乐
     boolean knockWallSoundFlag = true;//撞壁音效
+    boolean recordGameFlag = true;//是否录屏
+    SensorManager mySensorManager;    //SensorManager对象引用，后注册手机方向传感器
+    //Toast
+    private Toast mToast;
     //判断控制资源增长的线程是否已经开启
     //    界面转换控制
     public Handler hd = new Handler() {
@@ -150,17 +162,6 @@ public class MainActivity extends Activity {
             }
         }
     };
-
-    //处理游戏过程中，提示信息
-    public Handler gameHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            Toast.makeText(MainActivity.this,(String)msg.obj,Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    boolean recordGameFlag = true;//是否录屏
-    SensorManager mySensorManager;    //SensorManager对象引用，后注册手机方向传感器
     //监听传感器
     private SensorListener mySensorListener = new SensorListener() {
         @Override
@@ -206,11 +207,20 @@ public class MainActivity extends Activity {
         //其他变量
         mySensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);//获得SensorManager对象
         myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);//获得震动服务
+        initThread();
         initSound();
         initDataBase();
         initPlayer();
         //进入欢迎界面
         goToWelcomeView();
+    }
+
+    /**
+     * 初始化线程
+     */
+    private void initThread() {
+        keyBackThread = new KeyBackThread(this);//监听返回键线程
+        keyBackThread.start();
     }
 
     /**
@@ -301,14 +311,14 @@ public class MainActivity extends Activity {
         currentView = WhichView.MAIN_MENU;
 
         //实例化player
-        if (player==null)
+        if (player == null)
             player = new Player(0, 0, 0);
         if (resource == null)
             resource = new ResourceThread(player, null);
-        if(buildThreads==null){
-            buildThreads=new BuildThread[6];
-            for(int i=0;i<6;i++){
-                buildThreads[i]=new BuildThread(i,player,null);
+        if (buildThreads == null) {
+            buildThreads = new BuildThread[6];
+            for (int i = 0; i < 6; i++) {
+                buildThreads[i] = new BuildThread(i, player, null);
             }
         }
 
@@ -324,7 +334,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 //hd.sendEmptyMessage(1);//城镇界面
                 //指导demo
-                showGuide(1,
+                showGuide(currentView, 1,
                         new String[]{"欢迎玩小球世界", "你一定会觉得它很棒的"},
                         new String[]{"en", "好期待啊"});
             }
@@ -381,12 +391,12 @@ public class MainActivity extends Activity {
         final TextView woodstorage = (TextView) findViewById(R.id.woodstorage);
         final TextView minestorage = (TextView) findViewById(R.id.minestorage);
         //建造时的textview
-        final TextView houseing=(TextView)findViewById(R.id.houseing);
-        TextView hospitaling=(TextView)findViewById(R.id.hospitaling);
-        TextView fooding=(TextView)findViewById(R.id.fooding);
-        TextView wooding=(TextView)findViewById(R.id.wooding);
-        TextView fabricateing=(TextView)findViewById(R.id.fabricateing);
-        TextView mineing=(TextView)findViewById(R.id.mineing);
+        final TextView houseing = (TextView) findViewById(R.id.houseing);
+        TextView hospitaling = (TextView) findViewById(R.id.hospitaling);
+        TextView fooding = (TextView) findViewById(R.id.fooding);
+        TextView wooding = (TextView) findViewById(R.id.wooding);
+        TextView fabricateing = (TextView) findViewById(R.id.fabricateing);
+        TextView mineing = (TextView) findViewById(R.id.mineing);
 
         //每次进入该界面时实时调整资源的数量
         foodstorage.setText("" + player.getFood());
@@ -440,11 +450,11 @@ public class MainActivity extends Activity {
         //对arraw2添加监听器，即build按钮，前往建造房屋界面
         imageClick(arraw2, R.drawable.arraw2pressed, R.drawable.arraw2, 2);
         //建造线程
-        buildThread(0,house,houseing);
-        buildThread(1,food,fooding);
-        buildThread(2,wood,wooding);
-        buildThread(3,mine,mineing);
-        buildThread(4,fabricate,fabricateing);
+        buildThread(0, house, houseing);
+        buildThread(1, food, fooding);
+        buildThread(2, wood, wooding);
+        buildThread(3, mine, mineing);
+        buildThread(4, fabricate, fabricateing);
         buildThread(5, hospital, hospitaling);
 
     }
@@ -454,7 +464,7 @@ public class MainActivity extends Activity {
      */
     private void goToBuildHouseView() {
         setContentView(R.layout.build_house);
-        currentView=WhichView.BUILD_VIEW;
+        currentView = WhichView.BUILD_VIEW;
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
         //房屋的建造按钮
@@ -479,19 +489,19 @@ public class MainActivity extends Activity {
         //为返回按钮添加监听器
         imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
         //点击建筑的图片将会显示详情
-        ImageView house=(ImageView)findViewById(R.id.house);
-        ImageView wood=(ImageView)findViewById(R.id.wood);
-        ImageView food=(ImageView)findViewById(R.id.food);
-        ImageView fabricate=(ImageView)findViewById(R.id.fabricate);
-        ImageView mine=(ImageView)findViewById(R.id.mine);
-        ImageView hospital=(ImageView)findViewById(R.id.hospital);
+        ImageView house = (ImageView) findViewById(R.id.house);
+        ImageView wood = (ImageView) findViewById(R.id.wood);
+        ImageView food = (ImageView) findViewById(R.id.food);
+        ImageView fabricate = (ImageView) findViewById(R.id.fabricate);
+        ImageView mine = (ImageView) findViewById(R.id.mine);
+        ImageView hospital = (ImageView) findViewById(R.id.hospital);
         //为其添加点击事件
-        showHouseInfo(0,house);
-        showHouseInfo(1,food);
-        showHouseInfo(2,wood);
-        showHouseInfo(3,mine);
-        showHouseInfo(4,fabricate);
-        showHouseInfo(5,hospital);
+        showHouseInfo(0, house);
+        showHouseInfo(1, food);
+        showHouseInfo(2, wood);
+        showHouseInfo(3, mine);
+        showHouseInfo(4, fabricate);
+        showHouseInfo(5, hospital);
     }
 
     /**
@@ -499,25 +509,25 @@ public class MainActivity extends Activity {
      */
     private void goToMakeWeaponView() {
         setContentView(R.layout.make_weapon);
-        currentView=WhichView.EQUITMENT_VIEW;
+        currentView = WhichView.EQUITMENT_VIEW;
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
         imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
         //制造武器的按钮
         //raw制造
-        ImageButton cheapMake=(ImageButton)findViewById(R.id.cheapmake);
+        ImageButton cheapMake = (ImageButton) findViewById(R.id.cheapmake);
         //ordinary制造
-        ImageButton moderateMake=(ImageButton)findViewById(R.id.moderatemake);
+        ImageButton moderateMake = (ImageButton) findViewById(R.id.moderatemake);
         //shiny制造
-        ImageButton expensiveMake=(ImageButton)findViewById(R.id.expensivemake);
+        ImageButton expensiveMake = (ImageButton) findViewById(R.id.expensivemake);
         //为按钮添加监听器
         makeButtonClick(cheapMake, 1);
         makeButtonClick(moderateMake, 2);
         makeButtonClick(expensiveMake, 3);
         //用于更新textview的handler
-        final TextView test2=(TextView)findViewById(R.id.test2);
-        if(equitThread==null){
-            equitThread=new EquitThread(player,null);
+        final TextView test2 = (TextView) findViewById(R.id.test2);
+        if (equitThread == null) {
+            equitThread = new EquitThread(player, null);
         }
         equitThread.setHandler(new Handler() {
             @Override
@@ -538,33 +548,32 @@ public class MainActivity extends Activity {
      */
     private void goToPlayerInformationView() {
         setContentView(R.layout.player_information);
-        currentView=WhichView.PLAYER_VIEW;
+        currentView = WhichView.PLAYER_VIEW;
         //返回按钮
         final ImageView arraw3 = (ImageView) findViewById(R.id.back);
         imageClick(arraw3, R.drawable.arraw3pressed, R.drawable.arraw3, 1);
         //获得武器与装备显示的文本框
-        TextView weapon=(TextView)findViewById(R.id.weaponinfo);
-        TextView defense=(TextView)findViewById(R.id.defeninfo);
+        TextView weapon = (TextView) findViewById(R.id.weaponinfo);
+        TextView defense = (TextView) findViewById(R.id.defeninfo);
         //展示武器与防具的信息的方法
-        showequitinfo(weapon,defense);
+        showequitinfo(weapon, defense);
         //获得hp，等级，经验值，攻击力，防御力显示的文本框
-        TextView hpinfo=(TextView)findViewById(R.id.hpinfo);
-        TextView levelinfo=(TextView)findViewById(R.id.levelinfo);
-        TextView expinfo=(TextView)findViewById(R.id.expinfo);
-        TextView damageinfo=(TextView)findViewById(R.id.damageinfo);
-        TextView defenseinfo=(TextView)findViewById(R.id.defenseinfo);
+        TextView hpinfo = (TextView) findViewById(R.id.hpinfo);
+        TextView levelinfo = (TextView) findViewById(R.id.levelinfo);
+        TextView expinfo = (TextView) findViewById(R.id.expinfo);
+        TextView damageinfo = (TextView) findViewById(R.id.damageinfo);
+        TextView defenseinfo = (TextView) findViewById(R.id.defenseinfo);
         //显示信息
-        hpinfo.setText(""+player.getHp()+"/"+player.gethpMax(player.getLevel()));
-        levelinfo.setText(""+player.getLevel());
-        String exp="";
-        if(player.getLevel()!=10){
-            exp+=player.getExp()+"/"+player.getExpneeded()[player.getLevel()-1];
-        }
-        else{
-            exp+="已满级";
+        hpinfo.setText("" + player.getHp() + "/" + player.gethpMax(player.getLevel()));
+        levelinfo.setText("" + player.getLevel());
+        String exp = "";
+        if (player.getLevel() != 10) {
+            exp += player.getExp() + "/" + player.getExpneeded()[player.getLevel() - 1];
+        } else {
+            exp += "已满级";
         }
         expinfo.setText(exp);
-        damageinfo.setText(""+player.getDamage());
+        damageinfo.setText("" + player.getDamage());
         defenseinfo.setText("" + player.getDefense());
     }
 
@@ -587,7 +596,7 @@ public class MainActivity extends Activity {
 //               recorder.startRecorder();
 //            }
         } else {
-            gameView = new GameView(this, player.getLevelId()%4, player);//模拟第0（1）关
+            gameView = new GameView(this, player.getLevelId() % 4, player);//模拟第0（1）关
             currentView = WhichView.STORY_GAME_VIEW;//故事模式
         }
 
@@ -613,7 +622,7 @@ public class MainActivity extends Activity {
                     levelId = position;
                     //hd.sendEmptyMessage(5);//游戏界面
                     //显示指导demo，双线程比较复杂，就这样用着
-                    showGuide(5,
+                    showGuide(currentView, 5,
                             new String[]{"欢迎玩小球世界", "你一定会觉得它很棒的"},
                             new String[]{"en", "好期待啊"});
                 }
@@ -734,20 +743,22 @@ public class MainActivity extends Activity {
 
     /**
      * 无自动线程的guideview，可用
+     *
      * @param destView
      * @param guide
      * @param me
      */
-    public void showGuide(final int destView, final String[] guide,final String[] me) {
+    public void showGuide(final WhichView cView, final int destView, final String[] guide, final String[] me) {
         setContentView(R.layout.guidance);
-        //currentView = WhichView.GUIDE;//咱不崩用
+        currentView = WhichView.GUIDE;//咱不崩用
 
         //初始化控件
-        final TTSManager ttsManager = new TTSManager(this,new MyTTSListener());
-        final TextView guideView = (TextView)findViewById(R.id.guide);
-        final TextView meView = (TextView)findViewById(R.id.me);
-        ImageView skipButton = (ImageView)findViewById(R.id.skip);
-        curText=0;
+        final TTSManager ttsManager = new TTSManager(this, new MyTTSListener());
+        final TextView guideView = (TextView) findViewById(R.id.guide);
+        final TextView meView = (TextView) findViewById(R.id.me);
+        ImageView nextButton = (ImageView) findViewById(R.id.next);
+        ImageView skipButton = (ImageView) findViewById(R.id.skip);
+        curText = 0;
 
         //显示对话
         ttsManager.startTTS(guide[curText], Constant.BaiDu);//语音模拟
@@ -755,7 +766,7 @@ public class MainActivity extends Activity {
         meView.setText(me[curText]);
 
         //更换动画
-        skipButton.setOnClickListener(new View.OnClickListener() {
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 curText++;
@@ -764,14 +775,23 @@ public class MainActivity extends Activity {
                     guideView.setText(guide[curText]);
                     meView.setText(me[curText]);
                 } else {//语音放完切换到目标页面
+                    currentView = cView;
                     hd.sendEmptyMessage(destView);
                 }
+            }
+        });
+        //掠过动画
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentView = cView;
+                hd.sendEmptyMessage(destView);
             }
         });
     }
 
     //个人信息页面显示装备的详细信息
-    public void showequitinfo(final TextView weapon,final TextView defense){
+    public void showequitinfo(final TextView weapon, final TextView defense) {
         weapon.setText(null);
         SpannableString spanText = new SpannableString("正在装备的武器：");
         spanText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spanText.length(),
@@ -779,14 +799,13 @@ public class MainActivity extends Activity {
         spanText.setSpan(new AbsoluteSizeSpan(20, true), 0, spanText.length(),
                 Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         weapon.append(spanText);
-        if(player.getEquitments()[0]==null){
-            addBlackText(weapon,"\t\t无");
-        }
-        else{
+        if (player.getEquitments()[0] == null) {
+            addBlackText(weapon, "\t\t无");
+        } else {
             weapon.append("\n");
-            addBlackText(weapon,"\t\t武器名称："+player.getEquitments()[0].getName());
-            addBlackText(weapon,"\t\t武器攻击："+player.getEquitments()[0].getAttack());
-            addBlackText(weapon,"\t\t武器防御："+player.getEquitments()[0].getDefense());
+            addBlackText(weapon, "\t\t武器名称：" + player.getEquitments()[0].getName());
+            addBlackText(weapon, "\t\t武器攻击：" + player.getEquitments()[0].getAttack());
+            addBlackText(weapon, "\t\t武器防御：" + player.getEquitments()[0].getDefense());
         }
         defense.setText(null);
         spanText = new SpannableString("正在装备的防具：");
@@ -795,19 +814,18 @@ public class MainActivity extends Activity {
         spanText.setSpan(new AbsoluteSizeSpan(20, true), 0, spanText.length(),
                 Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         defense.append(spanText);
-        if(player.getEquitments()[1]==null){
-            addBlackText(defense,"\t\t无");
-        }
-        else{
+        if (player.getEquitments()[1] == null) {
+            addBlackText(defense, "\t\t无");
+        } else {
             defense.append("\n");
-            addBlackText(defense,"\t\t防具名称："+player.getEquitments()[1].getName());
-            addBlackText(defense,"\t\t防具攻击："+player.getEquitments()[1].getAttack());
-            addBlackText(defense,"\t\t防具防御："+player.getEquitments()[1].getDefense());
+            addBlackText(defense, "\t\t防具名称：" + player.getEquitments()[1].getName());
+            addBlackText(defense, "\t\t防具攻击：" + player.getEquitments()[1].getAttack());
+            addBlackText(defense, "\t\t防具防御：" + player.getEquitments()[1].getDefense());
         }
     }
 
     //在textview中添加黑色文字的方法
-    public void addBlackText(TextView text,String show){
+    public void addBlackText(TextView text, String show) {
         SpannableString spanText = new SpannableString(show);
         spanText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spanText.length(),
                 Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
@@ -818,7 +836,7 @@ public class MainActivity extends Activity {
     /*
     * 建筑页面显示建筑的详细信息
     * */
-    public void showHouseInfo(final int type,final ImageView image){
+    public void showHouseInfo(final int type, final ImageView image) {
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -872,7 +890,7 @@ public class MainActivity extends Activity {
     * type为2，代表ordinary建造
     * type为3，代表shiny建造
     * */
-    public void makeButtonClick(final ImageButton button, final int type){
+    public void makeButtonClick(final ImageButton button, final int type) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -949,7 +967,7 @@ public class MainActivity extends Activity {
     /*
     * 建造线程
     * */
-    public void buildThread(final int type,final ImageView image,final TextView text){
+    public void buildThread(final int type, final ImageView image, final TextView text) {
         buildThreads[type].setHandler(new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -963,12 +981,12 @@ public class MainActivity extends Activity {
                 }
             }
         });
-        if(player.getBuilding()[type].isUnderBuild()){
-            if(!buildThreads[type].isStart()){
+        if (player.getBuilding()[type].isUnderBuild()) {
+            if (!buildThreads[type].isStart()) {
                 buildThreads[type].start();
                 buildThreads[type].setStart(true);
             }
-            if(!buildThreads[type].isFlag()){
+            if (!buildThreads[type].isFlag()) {
                 buildThreads[type].setFlag(true);
             }
             image.setVisibility(View.GONE);
@@ -981,7 +999,7 @@ public class MainActivity extends Activity {
     * toast的显示
     * */
     public void showToast(String text) {
-        if(mToast == null) {
+        if (mToast == null) {
             mToast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
         } else {
             mToast.setText(text);
@@ -1032,7 +1050,7 @@ public class MainActivity extends Activity {
     /*
     * 主页面的建筑被点击之后的反应
     * */
-    public void houseImageClick(final ImageView image, final int pic1, final int pic2, final int type){
+    public void houseImageClick(final ImageView image, final int pic1, final int pic2, final int type) {
         image.setOnTouchListener(new OnTouchListener() {
             boolean click = true;
             float previousX = 0;
@@ -1055,59 +1073,58 @@ public class MainActivity extends Activity {
                 }
                 if (event.getAction() == event.ACTION_UP) {
                     image.setImageResource(pic2);
-                    if (click){
+                    if (click) {
                         int[] food;
                         int[] wood;
                         int[] mine;
-                        String output="该建筑的等级为"+player.getBuilding()[type].getLevel()+"\n";
-                        switch(type){
+                        String output = "该建筑的等级为" + player.getBuilding()[type].getLevel() + "\n";
+                        switch (type) {
                             case 0:
-                                food=new int[]{0,2,6,10};
-                                wood=new int[]{0,2,6,10};
-                                mine=new int[]{0,1,3,5};
-                                output+="每分钟增长资源：\n"
-                                        +"食物："+food[player.getBuilding()[type].getLevel()]+"\n"
-                                        +"木材："+wood[player.getBuilding()[type].getLevel()]+"\n"
-                                        +"铁料："+mine[player.getBuilding()[type].getLevel()]+"\n";
+                                food = new int[]{0, 2, 6, 10};
+                                wood = new int[]{0, 2, 6, 10};
+                                mine = new int[]{0, 1, 3, 5};
+                                output += "每分钟增长资源：\n"
+                                        + "食物：" + food[player.getBuilding()[type].getLevel()] + "\n"
+                                        + "木材：" + wood[player.getBuilding()[type].getLevel()] + "\n"
+                                        + "铁料：" + mine[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 1:
-                                food=new int[]{0,10,15,30};
-                                output+="每分钟增长资源：\n"
-                                        +"食物:"+food[player.getBuilding()[type].getLevel()]+"\n";
+                                food = new int[]{0, 10, 15, 30};
+                                output += "每分钟增长资源：\n"
+                                        + "食物:" + food[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 2:
-                                wood=new int[]{0,12,20,30};
-                                output+="每分钟增长资源：\n"
-                                        +"木材:"+wood[player.getBuilding()[type].getLevel()]+"\n";
+                                wood = new int[]{0, 12, 20, 30};
+                                output += "每分钟增长资源：\n"
+                                        + "木材:" + wood[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 3:
-                                mine=new int[]{0,5,10,20};
-                                output+="每分钟增长资源：\n"
-                                        +"铁料:"+mine[player.getBuilding()[type].getLevel()]+"\n";
+                                mine = new int[]{0, 5, 10, 20};
+                                output += "每分钟增长资源：\n"
+                                        + "铁料:" + mine[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 5:
                                 //医院根据建筑等级的不同，每滴血的花费
-                                int[] cost={0,5,3,2};
-                                output+="每治疗一点hp花费的食物："+cost[player.getBuilding()[type].getLevel()]+"\n";
+                                int[] cost = {0, 5, 3, 2};
+                                output += "每治疗一点hp花费的食物：" + cost[player.getBuilding()[type].getLevel()] + "\n";
                                 //判断是否有扣血
-                                if(player.getHp()==player.gethpMax(player.getLevel())){
-                                    output+="您当前十分健康，不需要治疗\n";
-                                }
-                                else{
-                                    int foodcost=cost[player.getBuilding()[type].getLevel()]*(player.gethpMax(player.getLevel())-player.getHp());
-                                    if(player.getFood()>=foodcost){
-                                        output+="您治疗了"+(player.gethpMax(player.getLevel())-player.getHp())+"点hp\n"
-                                        +"花费食物:"+foodcost+"\n";
-                                        player.setFood(player.getFood()-foodcost);
+                                if (player.getHp() == player.gethpMax(player.getLevel())) {
+                                    output += "您当前十分健康，不需要治疗\n";
+                                } else {
+                                    int foodcost = cost[player.getBuilding()[type].getLevel()] * (player.gethpMax(player.getLevel()) - player.getHp());
+                                    if (player.getFood() >= foodcost) {
+                                        output += "您治疗了" + (player.gethpMax(player.getLevel()) - player.getHp()) + "点hp\n"
+                                                + "花费食物:" + foodcost + "\n";
+                                        player.setFood(player.getFood() - foodcost);
                                         player.setHp(player.gethpMax(player.getLevel()));
-                                    }
-                                    else{
-                                        output+="完全治疗需要食物:"+foodcost+"\n"
-                                        +"您当前食物不足\n";
+                                    } else {
+                                        output += "完全治疗需要食物:" + foodcost + "\n"
+                                                + "您当前食物不足\n";
                                     }
                                 }
                                 break;
-                            default:break;
+                            default:
+                                break;
                         }
                         showToast(output);
                     }
@@ -1157,6 +1174,7 @@ public class MainActivity extends Activity {
 
     /**
      * 初始化guideview控件
+     *
      * @param destView
      */
     public void initGuideView(final int destView) {
@@ -1168,7 +1186,7 @@ public class MainActivity extends Activity {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guideThread.guideFlag=false;//结束线程
+                guideThread.guideFlag = false;//结束线程
                 hd.sendEmptyMessage(destView);
             }
         });
@@ -1183,15 +1201,48 @@ public class MainActivity extends Activity {
                     currentView == WhichView.HELP_VIEW ||
                     currentView == WhichView.CASUAL_MODE_VIEW) {
                 hd.sendEmptyMessage(0);
+            } else if (currentView == WhichView.CASUAL_GAME_VIEW) {//休闲游戏
+                if (keyBack) {
+                    BallMoveThread.ballMoveFlag = false;//小球线程停止
+                    hd.sendEmptyMessage(10);
+                    keyBack = false;
+                } else {
+                    Toast.makeText(this, "再按一次回到画廊", Toast.LENGTH_SHORT).show();
+                    keyBack = true;
+                }
+            } else if (currentView == WhichView.STORY_GAME_VIEW) {//故事游戏
+                if (keyBack) {
+                    BallMoveThread.ballMoveFlag = false;//小球线程停止
+                    hd.sendEmptyMessage(1);
+                    keyBack = false;
+                } else {
+                    Toast.makeText(this, "再按一次回到城镇", Toast.LENGTH_SHORT).show();
+                    keyBack = true;
+                }
+            } else if (currentView == WhichView.TOWN_VIEW) {
+                if (keyBack) {
+                    //停止游戏线程
+                    hd.sendEmptyMessage(0);
+                    keyBack = false;
+                } else {
+                    Toast.makeText(this, "再按一次回到菜单", Toast.LENGTH_SHORT).show();
+                    keyBack = true;
+                }
+            } else if (currentView == WhichView.MAIN_MENU) {
+                if (keyBack) {
+                    //停止游戏
+                    this.finish();
+                } else {
+                    Toast.makeText(this, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
+                    keyBack = true;
+                }
             }
-        }
-        else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             mAudioManager.adjustStreamVolume(
                     AudioManager.STREAM_MUSIC,
                     AudioManager.ADJUST_RAISE,
                     AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
-        }
-        else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             mAudioManager.adjustStreamVolume(
                     AudioManager.STREAM_MUSIC,
                     AudioManager.ADJUST_LOWER,
@@ -1215,8 +1266,8 @@ public class MainActivity extends Activity {
     protected void onPause() //重写onPause方法
     {
         super.onPause();
-        if (player!=null)
-            slu.updatePlayer(player,1);
+        if (player != null)
+            slu.updatePlayer(player, 1);
         mySensorManager.unregisterListener(mySensorListener);    //取消注册监听器
     }
 

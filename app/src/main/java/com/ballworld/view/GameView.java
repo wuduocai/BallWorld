@@ -91,20 +91,20 @@ public class GameView extends GLSurfaceView {
         cz = (float) (tz + Math.cos(Math.toRadians(xAngle)) * Math.cos(Math.toRadians(yAngle)) * DISTANCE);//摄像机z坐标
         cy = (float) (ty + Math.sin(Math.toRadians(xAngle)) * DISTANCE);//摄像机y坐标
 
-        //关卡速度,及其它特色
-        switch (levelId) {
-            case 0:
-                V_TENUATION = 0.95f;
-                break;
-            case 1:
-                V_TENUATION = 0.4f;
-                break;
-            case 2:
-                V_TENUATION = 0.7f;
-                break;
-            case 3:
-                V_TENUATION = 0.7f;
-        }
+//        //关卡速度,及其它特色
+//        switch (levelId) {
+//            case 0:
+//                V_TENUATION = 0.95f;
+//                break;
+//            case 1:
+//                V_TENUATION = 0.4f;
+//                break;
+//            case 2:
+//                V_TENUATION = 0.7f;
+//                break;
+//            case 3:
+//                V_TENUATION = 0.7f;
+//        }
         //初始化地图上的对象
         map = ALL_MAP[levelId];//地图
         mapBomb = new int[map.length][map[0].length];//炸弹
@@ -159,6 +159,7 @@ public class GameView extends GLSurfaceView {
 
         //开启小球移动线程
         ballMoveThread = new BallMoveThread(this, player);
+        BallMoveThread.ballMoveFlag=true;
         ballMoveThread.start();
     }
 
@@ -309,7 +310,7 @@ public class GameView extends GLSurfaceView {
             }
             bombId = initNoRepeatTexture(gl, R.drawable.bomb);//炸弹
             ballId = initNoRepeatTexture(gl, R.drawable.ball);//球
-            //targetId = initNoRepeatTexture(gl, R.drawable.target);//终点目标
+            targetId = initNoRepeatTexture(gl, R.drawable.target);//终点目标
             numberId = initNoRepeatTexture(gl, R.drawable.number);//数字
 
             initLight(gl);//初始化灯光
@@ -407,8 +408,8 @@ public class GameView extends GLSurfaceView {
                         float ballZTemp = map.length * UNIT_SIZE / 2 + ball.ballZ;
                         int iX = (int) (ballXTemp / UNIT_SIZE);
                         int iZ = (int) (ballZTemp / UNIT_SIZE);
-                        //如果没有覆盖将数字提升到小球上方
-                        if (coverBlocks[i][j] == 0 && iZ == i && iX == j) {
+                        //如果没有覆盖将数字提升到小球上方,且不是雷所在位置
+                        if (coverBlocks[i][j] == 0 && iZ == i && iX == j && mapBomb[i][j]==0) {
                             number.y = 1.5f;
                             if (j < 11)
                                 number.x += UNIT_SIZE / 3;
@@ -453,7 +454,10 @@ public class GameView extends GLSurfaceView {
                         coverBlock.x = (j) * UNIT_SIZE;
                         coverBlock.y = 0.01f;//略微浮起
                         coverBlock.z = (i) * UNIT_SIZE;
-                        coverBlock.drawSelf(gl, coverBlockId);//绘制
+                        if (i!=ball.ballMbZ||j!=ball.ballMbX)
+                            coverBlock.drawSelf(gl, coverBlockId);//绘制
+                        else
+                            coverBlock.drawSelf(gl, targetId);//绘制终点
                     }
                 }
             }
