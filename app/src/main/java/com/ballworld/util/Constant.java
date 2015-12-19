@@ -6,6 +6,15 @@ package com.ballworld.util;
 public class Constant {
     //游戏逻辑变量
     public static final int MAX_DAMAGE = 5;
+        //音效索引
+        public static final int HIT = 1;
+        public static final int BOMB = 2;
+        public static final int BG_MIAN = 3;//城镇
+        public static final int BG_GAME = 4;//游戏
+        public static final int BUTTON = 5;
+        public static final int WIN = 6;
+        public static final int LOSE = 7;
+        public static final int LEVEL_UP = 8;
     public static final String[] TREASURE = {"千年寒冰", "末影珍珠", "七色灵芝", "深海净水"};
     //界面变量
     public static final float WALL_HEIGHT = 0.2f;//墙的高度
