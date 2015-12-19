@@ -106,7 +106,7 @@ public class Player {
     }
 
     //调用的升级的方法
-    public void update(int i,boolean win){
+    public boolean update(int i,boolean win){
         int exp=0;
         switch(i){
             case 0:
@@ -135,12 +135,14 @@ public class Player {
         }
         this.setExp(this.getExp()+exp);
         if(this.level==10){
-            return;
+            return false;
         }
         while(this.level!=10&&this.exp>=this.expneeded[this.level-1]){
             this.setExp(this.exp-this.expneeded[this.level-1]);
             this.setLevel(this.getLevel() + 1);
+            return true;
         }
+        return false;
     }
 
     //set与get方法
