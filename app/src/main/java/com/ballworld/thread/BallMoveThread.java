@@ -228,7 +228,7 @@ public class BallMoveThread extends Thread {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                gameView.activity.hd.sendEmptyMessage(0);
+                gameView.activity.hd.sendEmptyMessage(10);
             } else {
                 int damage = player.harm(player.getLevelId());
                 if (player.getHp() <= 0) {
@@ -248,7 +248,7 @@ public class BallMoveThread extends Thread {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    gameView.activity.hd.sendEmptyMessage(10);
+                    gameView.activity.hd.sendEmptyMessage(1);
                 } else {
                     ttsManager.startTTS("要小心", Constant.XunFei);
                     //文字提醒
