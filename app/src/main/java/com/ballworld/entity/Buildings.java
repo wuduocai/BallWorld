@@ -45,38 +45,38 @@ public class Buildings {
         switch (this.getType()){
             //房屋的建造消耗
             case 0:
-                food=new int[]{20,100,240};
-                wood=new int[]{30,120,300};
+                food=new int[]{20,120,240};
+                wood=new int[]{40,320,600};
                 mine=new int[]{5,30,60};
                 break;
             //农场的建造消耗
             case 1:
                 food=new int[]{40,150,340};
-                wood=new int[]{30,120,300};
+                wood=new int[]{30,220,600};
                 mine=new int[]{10,35,80};
                 break;
             //伐木场的建造消耗
             case 2:
                 food=new int[]{20,100,240};
-                wood=new int[]{50,160,400};
+                wood=new int[]{50,360,800};
                 mine=new int[]{10,35,80};
                 break;
             //矿场的建造消耗
             case 3:
                 food=new int[]{20,100,240};
-                wood=new int[]{30,120,300};
+                wood=new int[]{30,320,600};
                 mine=new int[]{20,50,100};
                 break;
             //铁匠铺的建造消耗
             case 4:
                 food=new int[]{80,200,440};
-                wood=new int[]{90,220,400};
+                wood=new int[]{90,420,800};
                 mine=new int[]{50,90,160};
                 break;
             //医院的建造消耗
             case 5:
                 food=new int[]{20,100,240};
-                wood=new int[]{30,120,300};
+                wood=new int[]{30,220,600};
                 mine=new int[]{15,40,70};
                 break;
             default:;

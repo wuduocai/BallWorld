@@ -137,6 +137,9 @@ public class Player {
         if(this.level==10){
             return false;
         }
+        this.setFood(this.getFood()+3);
+        this.setMine(this.getMine() + 10);
+        this.setWood(this.getWood() + 3);
         while(this.level!=10&&this.exp>=this.expneeded[this.level-1]){
             this.setExp(this.exp-this.expneeded[this.level-1]);
             this.setLevel(this.getLevel() + 1);
@@ -286,5 +289,19 @@ public class Player {
 
     public int[] getExpneeded() {
         return this.expneeded;
+    }
+
+    public boolean isWin() {
+        int boss=10;
+        boolean alive=true;
+        int hp=this.getHp()-this.harm(4);
+        while(hp>0&&boss>0){
+            boss=boss-(this.getDamage()-20);
+            if(boss<=0){
+                return true;
+            }
+            hp=hp-this.harm(3);
+        }
+        return false;
     }
 }
