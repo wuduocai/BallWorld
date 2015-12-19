@@ -246,6 +246,21 @@ public class BallMoveThread extends Thread {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
+                    //增长经验和资源
+                    if (player.update(player.getLevelId(), false)) {
+                        try {
+                            sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        //文字提醒
+                        Message m2 = Message.obtain();
+                        if (player.getLevelId() <= 3)
+                            m2.obj = "你升级了";
+                        gameView.activity.gameHandler.sendMessage(m2);
+                        gameView.activity.playSound(LEVEL_UP, 0);
+                    }
                     gameView.activity.hd.sendEmptyMessage(1);
                 } else {
                     ttsManager.startTTS("要小心", Constant.XunFei);
@@ -313,7 +328,7 @@ public class BallMoveThread extends Thread {
                     gameView.activity.gameHandler.sendMessage(m2);
                     gameView.activity.playSound(LEVEL_UP, 0);
                 }
-                ;
+
                 if (player.getLevelId() == 5) {//最终胜利画面
                     gameView.activity.showGuide(gameView.activity.currentView, 1, STORY[5][0], STORY[5][0]);
                     player.setLevelId(0);
