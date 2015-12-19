@@ -68,7 +68,9 @@ import static com.ballworld.util.Constant.LEVEL_UP;
 import static com.ballworld.util.Constant.LOSE;
 import static com.ballworld.util.Constant.SCREEN_HEIGHT;
 import static com.ballworld.util.Constant.SCREEN_WIDTH;
+import static com.ballworld.util.Constant.STORY;
 import static com.ballworld.util.Constant.WIN;
+import static com.ballworld.util.Constant.start;
 import static com.ballworld.view.GameView.OnTouchListener;
 import static com.ballworld.view.GameView.ballGX;
 import static com.ballworld.view.GameView.ballGZ;
@@ -376,10 +378,14 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 playSound(BUTTON,0);
                 //hd.sendEmptyMessage(1);//城镇界面
-                //指导demo
-                showGuide(currentView, 1,
-                        new String[]{"欢迎玩小球世界", "你一定会觉得它很棒的"},
-                        new String[]{"en", "好期待啊"});
+                if (player.getFood()==0){//第一次玩，显示剧情
+                    //指导demo
+                    showGuide(currentView, 1,
+                            start[0],
+                            start[1]);
+                }
+                else
+                    hd.sendEmptyMessage(1);//城镇界面
             }
         });
         casualMode.setOnClickListener(new View.OnClickListener() {
@@ -645,7 +651,7 @@ public class MainActivity extends Activity {
 //               recorder.startRecorder();
 //            }
         } else {
-            gameView = new GameView(this, player.getLevelId() % 4, player);//模拟第0（1）关
+            gameView = new GameView(this, player.getLevelId() % 5, player);//模拟第0（1）关
             currentView = WhichView.STORY_GAME_VIEW;//故事模式
         }
 
@@ -669,11 +675,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position < 4 && cfg.galleryCenterPoint == cfg.getViewCenterPoint(view)) {
                     levelId = position;
-                    //hd.sendEmptyMessage(5);//游戏界面
-                    //显示指导demo，双线程比较复杂，就这样用着
-                    showGuide(currentView, 5,
-                            new String[]{"欢迎玩小球世界", "你一定会觉得它很棒的"},
-                            new String[]{"en", "好期待啊"});
+                    hd.sendEmptyMessage(5);//游戏界面
                 }
             }
         });
@@ -1236,8 +1238,10 @@ public class MainActivity extends Activity {
                         playSound(BUTTON, 0);
                         if (des==5) {//进入游戏，停止当前音乐
                             stopSound(BG_MIAN);
+                            showGuide(currentView,5,STORY[player.getLevelId()][0],STORY[player.getLevelId()][1]);
                         }
-                        hd.sendEmptyMessage(des);
+                        else
+                            hd.sendEmptyMessage(des);
                     }
                     click = true;
                 }

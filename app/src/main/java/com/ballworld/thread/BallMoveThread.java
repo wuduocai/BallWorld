@@ -13,6 +13,7 @@ import com.turing.androidsdk.tts.TTSManager;
 import static com.ballworld.util.Constant.BG_GAME;
 import static com.ballworld.util.Constant.LOSE;
 import static com.ballworld.util.Constant.MAX_DAMAGE;
+import static com.ballworld.util.Constant.STORY;
 import static com.ballworld.util.Constant.TREASURE;
 import static com.ballworld.util.Constant.UNIT_SIZE;
 import static com.ballworld.util.Constant.VZ_TENUATION;
@@ -233,6 +234,7 @@ public class BallMoveThread extends Thread {
                 if (player.getHp() <= 0) {
                     this.ballMoveFlag = false;//停止线程
                     player.setHp(1);//暂时模拟死亡效果
+                    player.update(player.getLevelId(), false);//失败经验
                     ttsManager.startTTS("Sorry,you died", Constant.XunFei);
                     gameView.activity.stopSound(BG_GAME);
                     gameView.activity.playSound(LOSE,0);
@@ -246,7 +248,7 @@ public class BallMoveThread extends Thread {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    gameView.activity.hd.sendEmptyMessage(1);
+                    gameView.activity.hd.sendEmptyMessage(10);
                 } else {
                     ttsManager.startTTS("要小心", Constant.XunFei);
                     //文字提醒
@@ -290,18 +292,23 @@ public class BallMoveThread extends Thread {
                 gameView.activity.playSound(WIN,0);
                 //文字提醒
                 Message m = Message.obtain();
-                m.obj = "通过关卡，获得"+TREASURE[player.getLevelId()%4];
+                if (player.getLevelId()<=3)
+                    m.obj = "通过关卡，获得"+TREASURE[player.getLevelId()%4];
                 gameView.activity.gameHandler.sendMessage(m);
+                player.update(player.getLevelId(),true);
                 player.setLevelId(player.getLevelId() + 1);
-
                 try {
                     sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                gameView.activity.hd.sendEmptyMessage(1);
+                if (player.getLevelId()==5) {//最终胜利画面
+                    gameView.activity.showGuide(gameView.activity.currentView,1,STORY[5][0],STORY[5][0]);
+                    player.setLevelId(0);
+                }
+                else
+                    gameView.activity.hd.sendEmptyMessage(1);
             }
         }
     }
-
 }
