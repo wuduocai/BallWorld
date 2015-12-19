@@ -119,13 +119,13 @@ public class Player {
                 exp=56;
                 break;
             case 3:
-                exp=120;
+                exp=220;
                 break;
             case 4:
-                exp=200;
+                exp=400;
                 break;
             case 5:
-                exp=400;
+                exp=1000;
                 break;
             default:
                 break;
