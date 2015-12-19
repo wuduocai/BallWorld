@@ -1,8 +1,6 @@
 package com.ballworld.thread;
 
-import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import com.ballworld.entity.Player;
 import com.ballworld.util.MyTTSListener;
@@ -11,8 +9,8 @@ import com.turing.androidsdk.constant.Constant;
 import com.turing.androidsdk.tts.TTSManager;
 
 import static com.ballworld.util.Constant.BG_GAME;
+import static com.ballworld.util.Constant.LEVEL_UP;
 import static com.ballworld.util.Constant.LOSE;
-import static com.ballworld.util.Constant.MAX_DAMAGE;
 import static com.ballworld.util.Constant.STORY;
 import static com.ballworld.util.Constant.TREASURE;
 import static com.ballworld.util.Constant.UNIT_SIZE;
@@ -216,9 +214,9 @@ public class BallMoveThread extends Thread {
             //回到剧情界面
             if (player == Player.NIL) {
                 this.ballMoveFlag = false;//停止线程
-                ttsManager.startTTS("Sorry,you died",Constant.XunFei);//语音播报
+                ttsManager.startTTS("Sorry,you died", Constant.XunFei);//语音播报
                 gameView.activity.stopSound(BG_GAME);
-                gameView.activity.playSound(LOSE,0);
+                gameView.activity.playSound(LOSE, 0);
                 //文字提醒
                 Message m = Message.obtain();
                 m.obj = "你被炸死了";
@@ -237,10 +235,10 @@ public class BallMoveThread extends Thread {
                     player.update(player.getLevelId(), false);//失败经验
                     ttsManager.startTTS("Sorry,you died", Constant.XunFei);
                     gameView.activity.stopSound(BG_GAME);
-                    gameView.activity.playSound(LOSE,0);
+                    gameView.activity.playSound(LOSE, 0);
                     //文字提醒
                     Message m = Message.obtain();
-                    m.obj = "你损失了"+(damage)+"滴血,你被炸死了";
+                    m.obj = "你损失了" + (damage) + "滴血,你被炸死了";
                     gameView.activity.gameHandler.sendMessage(m);
 
                     try {
@@ -248,12 +246,27 @@ public class BallMoveThread extends Thread {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
+                    //增长经验和资源
+                    if (player.update(player.getLevelId(), false)) {
+                        try {
+                            sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        //文字提醒
+                        Message m2 = Message.obtain();
+                        if (player.getLevelId() <= 3)
+                            m2.obj = "你升级了";
+                        gameView.activity.gameHandler.sendMessage(m2);
+                        gameView.activity.playSound(LEVEL_UP, 0);
+                    }
                     gameView.activity.hd.sendEmptyMessage(1);
                 } else {
                     ttsManager.startTTS("要小心", Constant.XunFei);
                     //文字提醒
                     Message m = Message.obtain();
-                    m.obj = "你损失了"+(damage)+"滴血";
+                    m.obj = "你损失了" + (damage) + "滴血";
                     gameView.activity.gameHandler.sendMessage(m);
                 }
             }
@@ -274,7 +287,7 @@ public class BallMoveThread extends Thread {
             if (player == Player.NIL) {
                 ttsManager.startTTS("congratulations, you win!!!", Constant.XunFei);
                 gameView.activity.stopSound(BG_GAME);
-                gameView.activity.playSound(WIN,0);
+                gameView.activity.playSound(WIN, 0);
                 //文字提醒
                 Message m = Message.obtain();
                 m.obj = "你过关了";
@@ -289,24 +302,37 @@ public class BallMoveThread extends Thread {
             } else {
                 ttsManager.startTTS("congratulations!!", Constant.XunFei);
                 gameView.activity.stopSound(BG_GAME);
-                gameView.activity.playSound(WIN,0);
+                gameView.activity.playSound(WIN, 0);
                 //文字提醒
                 Message m = Message.obtain();
-                if (player.getLevelId()<=3)
-                    m.obj = "通过关卡，获得"+TREASURE[player.getLevelId()%4];
+                if (player.getLevelId() <= 3)
+                    m.obj = "通过关卡，获得" + TREASURE[player.getLevelId() % 4];
                 gameView.activity.gameHandler.sendMessage(m);
-                player.update(player.getLevelId(),true);
                 player.setLevelId(player.getLevelId() + 1);
                 try {
                     sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (player.getLevelId()==5) {//最终胜利画面
-                    gameView.activity.showGuide(gameView.activity.currentView,1,STORY[5][0],STORY[5][0]);
-                    player.setLevelId(0);
+                //增长经验和资源
+                if (player.update(player.getLevelId(), true)) {
+                    try {
+                        sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //文字提醒
+                    Message m2 = Message.obtain();
+                    if (player.getLevelId() <= 3)
+                        m2.obj = "你升级了";
+                    gameView.activity.gameHandler.sendMessage(m2);
+                    gameView.activity.playSound(LEVEL_UP, 0);
                 }
-                else
+
+                if (player.getLevelId() == 5) {//最终胜利画面
+                    gameView.activity.showGuide(gameView.activity.currentView, 1, STORY[5][0], STORY[5][0]);
+                    player.setLevelId(0);
+                } else
                     gameView.activity.hd.sendEmptyMessage(1);
             }
         }
