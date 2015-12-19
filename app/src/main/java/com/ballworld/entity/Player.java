@@ -106,7 +106,34 @@ public class Player {
     }
 
     //调用的升级的方法
-    public void update(){
+    public void update(int i,boolean win){
+        int exp=0;
+        switch(i){
+            case 0:
+                exp=2;
+                break;
+            case 1:
+                exp=6;
+                break;
+            case 2:
+                exp=14;
+                break;
+            case 3:
+                exp=30;
+                break;
+            case 4:
+                exp=60;
+                break;
+            case 5:
+                exp=100;
+                break;
+            default:
+                break;
+        }
+        if(!win){
+            exp=exp/2;
+        }
+        this.setExp(this.getExp()+exp);
         if(this.level==10){
             return;
         }
