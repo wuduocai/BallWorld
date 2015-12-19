@@ -110,28 +110,28 @@ public class Player {
         int exp=0;
         switch(i){
             case 0:
-                exp=2;
+                exp=8;
                 break;
             case 1:
-                exp=6;
+                exp=24;
                 break;
             case 2:
-                exp=14;
+                exp=56;
                 break;
             case 3:
-                exp=30;
+                exp=120;
                 break;
             case 4:
-                exp=60;
+                exp=200;
                 break;
             case 5:
-                exp=100;
+                exp=400;
                 break;
             default:
                 break;
         }
         if(!win){
-            exp=exp/2;
+            exp=exp/4;
         }
         this.setExp(this.getExp()+exp);
         if(this.level==10){
