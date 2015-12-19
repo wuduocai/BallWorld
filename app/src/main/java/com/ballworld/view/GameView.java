@@ -139,12 +139,12 @@ public class GameView extends GLSurfaceView {
         road = new Road(map[0].length, map.length);//地板
         ball = new Ball(ballR, 15);//小球
         ball.ballGX = ball.ballGZ = ball.ballVX = ball.ballVZ = 0f;
-        ball.ballCsX = ALL_INIT_LOCATION[levelId][0];//读取球初始格子
-        ball.ballCsZ = ALL_INIT_LOCATION[levelId][1];
+        ball.ballCsX = ALL_INIT_LOCATION[levelId][1];//读取球初始格子
+        ball.ballCsZ = ALL_INIT_LOCATION[levelId][0];
         ball.ballX = ball.ballCsX * UNIT_SIZE - map[0].length * UNIT_SIZE / 2 + UNIT_SIZE / 2;//初始化球位置
         ball.ballZ = ball.ballCsZ * UNIT_SIZE - map.length * UNIT_SIZE / 2 + UNIT_SIZE / 2;
-        ball.ballMbX = ALL_TARGET_LOCATION[levelId][0];
-        ball.ballMbZ = ALL_TARGET_LOCATION[levelId][1];
+        ball.ballMbX = ALL_TARGET_LOCATION[levelId][1];
+        ball.ballMbZ = ALL_TARGET_LOCATION[levelId][0];
         walls = new Walls();
         bomb = new Bomb(1, 1);//传参为长宽占几个单位
         coverBlock = new CoverBlock(1, 1);
@@ -286,7 +286,7 @@ public class GameView extends GLSurfaceView {
             gl.glEnable(GL10.GL_DEPTH_TEST);
 
             //初始化纹理
-            switch (levelId) {//路面类型
+            switch (levelId%4) {//路面类型
                 case 0:
                     roadId = initNoRepeatTexture(gl, R.drawable.snow);//路
                     wallId = initRepeatTexture(gl, R.drawable.snowwall);//墙

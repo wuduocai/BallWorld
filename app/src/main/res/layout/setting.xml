@@ -22,6 +22,18 @@
         android:layout_width="150dp"
         android:layout_height="40dp"
         android:text="背景音效"
+        android:id="@+id/bg_main"
+        android:layout_gravity="center_horizontal"
+        android:checked="true"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/bottom_bar"
+        android:textColor="#ffc918"
+        android:textSize="24dp" />
+
+    <CheckBox
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:text="游戏音效"
         android:id="@+id/sound"
         android:checked="true"
         android:textSize="24dp"

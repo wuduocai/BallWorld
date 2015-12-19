@@ -1,4 +1,4 @@
-﻿package com.ballworld.activity;
+package com.ballworld.activity;
 
 import android.app.Activity;
 import android.app.Service;
@@ -58,8 +58,19 @@ import cn.sharerec.recorder.impl.GLRecorder;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
+import static android.view.View.INVISIBLE;
+import static com.ballworld.util.Constant.BG_GAME;
+import static com.ballworld.util.Constant.BG_MIAN;
+import static com.ballworld.util.Constant.BOMB;
+import static com.ballworld.util.Constant.BUTTON;
+import static com.ballworld.util.Constant.HIT;
+import static com.ballworld.util.Constant.LEVEL_UP;
+import static com.ballworld.util.Constant.LOSE;
 import static com.ballworld.util.Constant.SCREEN_HEIGHT;
 import static com.ballworld.util.Constant.SCREEN_WIDTH;
+import static com.ballworld.util.Constant.STORY;
+import static com.ballworld.util.Constant.WIN;
+import static com.ballworld.util.Constant.start;
 import static com.ballworld.view.GameView.OnTouchListener;
 import static com.ballworld.view.GameView.ballGX;
 import static com.ballworld.view.GameView.ballGZ;
@@ -114,8 +125,10 @@ public class MainActivity extends Activity {
     boolean shakeflag = true;//是否震动
     SoundPool soundPool;//声音池
     HashMap<Integer, Integer> soundPoolMap; //记录声音池返回的资源id
+    int[] streamId = {-1,-1};//记录正在播放的流
     boolean backgroundSoundFlag = true;//是否播放背景音乐
-    boolean knockWallSoundFlag = true;//撞壁音效
+    boolean bg_game_flag = true;//撞壁音效
+    //boolean[] voiceFlag = {true,true,true,true,true,true,true,true};//音效设置
     boolean recordGameFlag = true;//是否录屏
     SensorManager mySensorManager;    //SensorManager对象引用，后注册手机方向传感器
     //Toast
@@ -242,11 +255,17 @@ public class MainActivity extends Activity {
      */
     private void initSound() {
         //声音池
-        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        soundPool = new SoundPool(15, AudioManager.STREAM_MUSIC, 0);
         soundPoolMap = new HashMap<Integer, Integer>();
         //撞墙音
-        soundPoolMap.put(1, soundPool.load(this, R.raw.dong, 1));
-        soundPoolMap.put(2, soundPool.load(this, R.raw.bomb, 1));
+        soundPoolMap.put(HIT, soundPool.load(this, R.raw.dong, 1));//撞壁音效
+        soundPoolMap.put(BOMB, soundPool.load(this, R.raw.bomb, 1));//炸弹音效
+        soundPoolMap.put(BG_MIAN, soundPool.load(this, R.raw.bg_main,1));
+        soundPoolMap.put(BG_GAME, soundPool.load(this, R.raw.bg_fight,1));
+        soundPoolMap.put(BUTTON, soundPool.load(this, R.raw.effect_button,1));
+        soundPoolMap.put(WIN, soundPool.load(this, R.raw.effect_win,1));
+        soundPoolMap.put(LOSE, soundPool.load(this, R.raw.effect_failed,1));
+        soundPoolMap.put(LEVEL_UP, soundPool.load(this, R.raw.effect_level_up,1));
     }
 
     /**
@@ -261,15 +280,40 @@ public class MainActivity extends Activity {
         float streamVolumeMax = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         float volume = streamVolumeCurrent / streamVolumeMax;
         switch (sound) {
-            case 1:
-                if (knockWallSoundFlag)//是否关闭撞壁音效
-                    soundPool.play(soundPoolMap.get(sound), volume, volume, 1, loop, 1f);
+            case BG_GAME:
+                if (bg_game_flag) {//是否游戏引
+                    int stream =  soundPool.play(soundPoolMap.get(sound), volume, volume, 1, loop, 1f);
+                    streamId[1] = stream;
+                }
                 break;
-            case 2:
+            case BG_MIAN:
+                if (backgroundSoundFlag) {
+                    int stream = soundPool.play(soundPoolMap.get(sound), volume, volume, 1, loop, 1f);
+                    streamId[0] = stream;
+                }
+                break;
+            default:
                 soundPool.play(soundPoolMap.get(sound), volume, volume, 1, loop, 1f);
-                break;
         }
+    }
 
+    /**
+     * 停止音乐
+     * @param sound
+     */
+    public void stopSound(int sound) {
+        if (sound==BG_MIAN) {
+            if (streamId[0]!=-1) {
+                soundPool.stop(streamId[0]);
+                streamId[0]=-1;
+            }
+        }
+        else {
+            if (streamId[1]!=-1) {
+                soundPool.stop(streamId[1]);
+                streamId[0]=-1;
+            }
+        }
     }
 
     /**
@@ -332,28 +376,36 @@ public class MainActivity extends Activity {
         storyMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 //hd.sendEmptyMessage(1);//城镇界面
-                //指导demo
-                showGuide(currentView, 1,
-                        new String[]{"欢迎玩小球世界", "你一定会觉得它很棒的"},
-                        new String[]{"en", "好期待啊"});
+                if (player.getFood()==0){//第一次玩，显示剧情
+                    //指导demo
+                    showGuide(currentView, 1,
+                            start[0],
+                            start[1]);
+                }
+                else
+                    hd.sendEmptyMessage(1);//城镇界面
             }
         });
         casualMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 hd.sendEmptyMessage(10);//游戏界面
             }
         });
         gameSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 hd.sendEmptyMessage(8);//设置界面
             }
         });
         gameHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 hd.sendEmptyMessage(7);//帮助界面
             }
         });
@@ -368,6 +420,8 @@ public class MainActivity extends Activity {
     private void goToTownView() {
         setContentView(R.layout.main_town);
         currentView = WhichView.TOWN_VIEW;
+        if (streamId[0]==-1)
+            playSound(BG_MIAN,-1);
         //头像点击，即进入个人信息界面
         final ImageView person = (ImageView) findViewById(R.id.head);
         //医院
@@ -581,6 +635,7 @@ public class MainActivity extends Activity {
      * 进入游戏界面
      */
     private void goToGameView() {
+        playSound(BG_GAME,-1);
         if (currentView == WhichView.CASUAL_MODE_VIEW) {
             gameView = new GameView(this, levelId, Player.NIL);//模拟第0（1）关
             currentView = WhichView.CASUAL_GAME_VIEW;//休闲模式
@@ -596,7 +651,7 @@ public class MainActivity extends Activity {
 //               recorder.startRecorder();
 //            }
         } else {
-            gameView = new GameView(this, player.getLevelId() % 4, player);//模拟第0（1）关
+            gameView = new GameView(this, player.getLevelId() % 5, player);//模拟第0（1）关
             currentView = WhichView.STORY_GAME_VIEW;//故事模式
         }
 
@@ -620,11 +675,7 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position < 4 && cfg.galleryCenterPoint == cfg.getViewCenterPoint(view)) {
                     levelId = position;
-                    //hd.sendEmptyMessage(5);//游戏界面
-                    //显示指导demo，双线程比较复杂，就这样用着
-                    showGuide(currentView, 5,
-                            new String[]{"欢迎玩小球世界", "你一定会觉得它很棒的"},
-                            new String[]{"en", "好期待啊"});
+                    hd.sendEmptyMessage(5);//游戏界面
                 }
             }
         });
@@ -685,9 +736,25 @@ public class MainActivity extends Activity {
         setContentView(R.layout.setting);
         currentView = WhichView.SETTING_VIEW;
 
-        //音效
+        //游戏音效
+        final CheckBox mainSound = (CheckBox) findViewById(R.id.bg_main);
+        if (backgroundSoundFlag)
+            mainSound.setChecked(true);
+        else
+            mainSound.setChecked(false);
+        mainSound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mainSound.isChecked())
+                    backgroundSoundFlag = true;
+                else
+                    backgroundSoundFlag = false;
+            }
+        });
+
+        //游戏音效
         final CheckBox sound = (CheckBox) findViewById(R.id.sound);
-        if (knockWallSoundFlag)
+        if (bg_game_flag)
             sound.setChecked(true);
         else
             sound.setChecked(false);
@@ -695,9 +762,9 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (sound.isChecked())
-                    knockWallSoundFlag = true;
+                    bg_game_flag = true;
                 else
-                    knockWallSoundFlag = false;
+                    bg_game_flag = false;
             }
         });
 
@@ -769,6 +836,7 @@ public class MainActivity extends Activity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 curText++;
                 if (curText < guide.length) {
                     ttsManager.startTTS(guide[curText], Constant.BaiDu);//语音模拟
@@ -784,6 +852,7 @@ public class MainActivity extends Activity {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 currentView = cView;
                 hd.sendEmptyMessage(destView);
             }
@@ -894,6 +963,7 @@ public class MainActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 switch (type) {
                     case 1:
                         //判断资源是否足够
@@ -991,7 +1061,7 @@ public class MainActivity extends Activity {
             }
             image.setVisibility(View.GONE);
             text.setVisibility(View.VISIBLE);
-            text.setText((player.getBuilding()[type].getActualTime()/60) + ":" + (player.getBuilding()[type].getActualTime()%60));
+            text.setText((player.getBuilding()[type].getActualTime() / 60) + ":" + (player.getBuilding()[type].getActualTime() % 60));
         }
     }
 
@@ -1016,6 +1086,7 @@ public class MainActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 //判断是否正在建造之中
                 if (player.getBuilding()[type].isUnderBuild()) {
                     showToast("正在建造之中");
@@ -1163,8 +1234,15 @@ public class MainActivity extends Activity {
                 }
                 if (event.getAction() == event.ACTION_UP) {
                     image.setImageResource(pic2);
-                    if (click)
-                        hd.sendEmptyMessage(des);
+                    if (click) {
+                        playSound(BUTTON, 0);
+                        if (des==5) {//进入游戏，停止当前音乐
+                            stopSound(BG_MIAN);
+                            showGuide(currentView,5,STORY[player.getLevelId()][0],STORY[player.getLevelId()][1]);
+                        }
+                        else
+                            hd.sendEmptyMessage(des);
+                    }
                     click = true;
                 }
                 return true;
@@ -1186,6 +1264,7 @@ public class MainActivity extends Activity {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                playSound(BUTTON,0);
                 guideThread.guideFlag = false;//结束线程
                 hd.sendEmptyMessage(destView);
             }
@@ -1204,6 +1283,7 @@ public class MainActivity extends Activity {
             } else if (currentView == WhichView.CASUAL_GAME_VIEW) {//休闲游戏
                 if (keyBack) {
                     BallMoveThread.ballMoveFlag = false;//小球线程停止
+                    stopSound(BG_GAME);
                     hd.sendEmptyMessage(10);
                     keyBack = false;
                 } else {
@@ -1213,6 +1293,7 @@ public class MainActivity extends Activity {
             } else if (currentView == WhichView.STORY_GAME_VIEW) {//故事游戏
                 if (keyBack) {
                     BallMoveThread.ballMoveFlag = false;//小球线程停止
+                    stopSound(BG_GAME);
                     hd.sendEmptyMessage(1);
                     keyBack = false;
                 } else {
@@ -1222,6 +1303,7 @@ public class MainActivity extends Activity {
             } else if (currentView == WhichView.TOWN_VIEW) {
                 if (keyBack) {
                     //停止游戏线程
+                    stopSound(BG_MIAN);
                     hd.sendEmptyMessage(0);
                     keyBack = false;
                 } else {
