@@ -255,7 +255,7 @@ public class MainActivity extends Activity {
      */
     private void initSound() {
         //声音池
-        soundPool = new SoundPool(15, AudioManager.STREAM_MUSIC, 0);
+        soundPool = new SoundPool(20, AudioManager.STREAM_MUSIC, 0);
         soundPoolMap = new HashMap<Integer, Integer>();
         //撞墙音
         soundPoolMap.put(HIT, soundPool.load(this, R.raw.dong, 1));//撞壁音效

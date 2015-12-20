@@ -256,12 +256,13 @@ public class BallMoveThread extends Thread {
                         }
                         //文字提醒
                         Message m2 = Message.obtain();
-                        if (player.getLevelId() <= 3)
-                            m2.obj = "你升级了";
+                        m2.obj = "你升级了";
                         gameView.activity.gameHandler.sendMessage(m2);
                         gameView.activity.playSound(LEVEL_UP, 0);
                     }
+
                     gameView.activity.hd.sendEmptyMessage(1);
+
                 } else {
                     ttsManager.startTTS("要小心", Constant.XunFei);
                     //文字提醒
@@ -323,14 +324,13 @@ public class BallMoveThread extends Thread {
                     }
                     //文字提醒
                     Message m2 = Message.obtain();
-                    if (player.getLevelId() <= 3)
-                        m2.obj = "你升级了";
+                    m2.obj = "你升级了";
                     gameView.activity.gameHandler.sendMessage(m2);
                     gameView.activity.playSound(LEVEL_UP, 0);
                 }
 
                 if (player.getLevelId() == 5) {//最终胜利画面
-                    gameView.activity.showGuide(gameView.activity.currentView, 1, STORY[5][0], STORY[5][0]);
+                    gameView.activity.showGuide(gameView.activity.currentView, 1, STORY[5][0], STORY[5][1]);
                     player.setLevelId(0);
                 } else
                     gameView.activity.hd.sendEmptyMessage(1);
