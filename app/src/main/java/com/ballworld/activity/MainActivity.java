@@ -172,6 +172,12 @@ public class MainActivity extends Activity {
                 case 10://休闲模式选择
                     goToCasualModeView();
                     break;
+                case 11:
+                    showGuide(WhichView.STORY_GAME_VIEW, 1, STORY[5][0], STORY[5][1]);
+                    break;
+                case 12:
+                    showGuide(WhichView.STORY_GAME_VIEW,1,STORY[6][0],STORY[6][1]);
+                    break;
             }
         }
     };
@@ -629,13 +635,21 @@ public class MainActivity extends Activity {
         expinfo.setText(exp);
         damageinfo.setText("" + player.getDamage());
         defenseinfo.setText("" + player.getDefense());
+        defenseinfo.setClickable(true);
+        defenseinfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.setHp(player.getHp()+1);
+                player.getEquitments()[1].setDefense(player.getEquitments()[1].getDefense()+1);
+            }
+        });
     }
 
     /**
      * 进入游戏界面
      */
     private void goToGameView() {
-        playSound(BG_GAME,-1);
+        playSound(BG_GAME, -1);
         if (currentView == WhichView.CASUAL_MODE_VIEW) {
             gameView = new GameView(this, levelId, Player.NIL);//模拟第0（1）关
             currentView = WhichView.CASUAL_GAME_VIEW;//休闲模式
@@ -836,7 +850,7 @@ public class MainActivity extends Activity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(BUTTON,0);
+                playSound(BUTTON, 0);
                 curText++;
                 if (curText < guide.length) {
                     ttsManager.startTTS(guide[curText], Constant.BaiDu);//语音模拟
@@ -852,7 +866,7 @@ public class MainActivity extends Activity {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playSound(BUTTON,0);
+                playSound(BUTTON, 0);
                 currentView = cView;
                 hd.sendEmptyMessage(destView);
             }
@@ -988,7 +1002,10 @@ public class MainActivity extends Activity {
                         }
                         break;
                     case 2://判断资源是否足够
-                        if (player.getMine() >= 120) {
+                        if(player.getBuilding()[4].getLevel()<2){
+                            showToast("请升级铁匠铺后再进行该等级的建造");
+                        }
+                        else if (player.getMine() >= 120) {
                             player.setMine(player.getMine() - 120);
                             Equitment newequit = new Equitment(2);
                             showToast("获得：" + newequit.getName() + "\n"
@@ -1008,7 +1025,10 @@ public class MainActivity extends Activity {
                         }
                         break;
                     case 3://判断资源是否足够
-                        if (player.getMine() >= 300) {
+                        if(player.getBuilding()[4].getLevel()<3){
+                            showToast("请升级铁匠铺后再进行该等级的建造");
+                        }
+                        else if (player.getMine() >= 300) {
                             player.setMine(player.getMine() - 300);
                             Equitment newequit = new Equitment(3);
                             showToast("获得：" + newequit.getName() + "\n"
@@ -1176,7 +1196,7 @@ public class MainActivity extends Activity {
                                 break;
                             case 5:
                                 //医院根据建筑等级的不同，每滴血的花费
-                                int[] cost = {0, 5, 3, 2};
+                                int[] cost = {0, 35, 25, 15};
                                 output += "每治疗一点hp花费的食物：" + cost[player.getBuilding()[type].getLevel()] + "\n";
                                 //判断是否有扣血
                                 if (player.getHp() == player.gethpMax(player.getLevel())) {

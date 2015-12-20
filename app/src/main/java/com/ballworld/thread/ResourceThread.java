@@ -25,8 +25,8 @@ public class ResourceThread extends Thread {
     public void run(){
         while(true){
             int[] res=player.produce();
-            player.setFood(Math.min(player.getFood() + 2+res[0],99999));
-            player.setWood(Math.min(player.getWood() + 2+res[1],99999));
+            player.setFood(Math.min(player.getFood() + 1+res[0],99999));
+            player.setWood(Math.min(player.getWood() + 1+res[1],99999));
             player.setMine(Math.min(player.getMine() + 1+res[2],99999));
             Bundle bundle=new Bundle();
             Message msg = new Message();//创建消息类
@@ -36,7 +36,7 @@ public class ResourceThread extends Thread {
             msg.setData(bundle);
             handler.sendMessage(msg);//通过handler对象发送消息
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

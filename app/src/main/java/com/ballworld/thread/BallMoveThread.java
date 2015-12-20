@@ -330,8 +330,15 @@ public class BallMoveThread extends Thread {
                 }
 
                 if (player.getLevelId() == 5) {//最终胜利画面
-                    gameView.activity.showGuide(gameView.activity.currentView, 1, STORY[5][0], STORY[5][1]);
-                    player.setLevelId(0);
+                    //gameView.activity.showGuide(gameView.activity.currentView, 1, STORY[5][0], STORY[5][1]);
+                    if (player.isWin()) {
+                        player.setLevelId(0);
+                        gameView.activity.hd.sendEmptyMessage(11);//胜利页面
+                    }
+                    else {
+                        player.setLevelId(4);
+                        gameView.activity.hd.sendEmptyMessage(12);//胜利页面
+                    }
                 } else
                     gameView.activity.hd.sendEmptyMessage(1);
             }
