@@ -332,12 +332,13 @@ public class BallMoveThread extends Thread {
                 if (player.getLevelId() == 5) {//最终胜利画面
                     //gameView.activity.showGuide(gameView.activity.currentView, 1, STORY[5][0], STORY[5][1]);
                     if (player.isWin()) {
-                        player.setLevelId(0);
+                        player.setLevelId(0);//重新游戏
                         gameView.activity.hd.sendEmptyMessage(11);//胜利页面
                     }
                     else {
-                        player.setLevelId(4);
-                        gameView.activity.hd.sendEmptyMessage(12);//胜利页面
+                        player.setLevelId(4);//关卡回执
+                        player.setHp(1);//血量重置
+                        gameView.activity.hd.sendEmptyMessage(12);//失败页面
                     }
                 } else
                     gameView.activity.hd.sendEmptyMessage(1);
