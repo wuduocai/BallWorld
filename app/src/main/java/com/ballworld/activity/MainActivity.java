@@ -1174,24 +1174,24 @@ public class MainActivity extends Activity {
                                 food = new int[]{0, 2, 6, 10};
                                 wood = new int[]{0, 2, 6, 10};
                                 mine = new int[]{0, 1, 3, 5};
-                                output += "每分钟增长资源：\n"
+                                output += "每1.5s增长资源：\n"
                                         + "食物：" + food[player.getBuilding()[type].getLevel()] + "\n"
                                         + "木材：" + wood[player.getBuilding()[type].getLevel()] + "\n"
                                         + "铁料：" + mine[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 1:
                                 food = new int[]{0, 10, 15, 30};
-                                output += "每分钟增长资源：\n"
+                                output += "每1.5s增长资源：\n"
                                         + "食物:" + food[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 2:
                                 wood = new int[]{0, 12, 20, 30};
-                                output += "每分钟增长资源：\n"
+                                output += "每1.5s增长资源：\n"
                                         + "木材:" + wood[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 3:
                                 mine = new int[]{0, 5, 10, 20};
-                                output += "每分钟增长资源：\n"
+                                output += "每1.5s增长资源：\n"
                                         + "铁料:" + mine[player.getBuilding()[type].getLevel()] + "\n";
                                 break;
                             case 5:
